@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sehat360 — Project Brief</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep: #1A6B4A;
+      --green-mid: #2D9B6F;
+      --green-light: #E8F5EE;
+      --saffron: #E8820C;
+      --saffron-light: #FEF3E2;
+      --ink: #0F1C14;
+      --ink-soft: #3D5247;
+      --smoke: #F4F8F5;
+      --white: #FFFFFF;
+      --border: #D4E8DC;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--smoke);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--green-deep);
+      padding: 48px 40px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '360°';
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      font-size: 180px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.04);
+      font-family: var(--sans);
+      line-height: 1;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--saffron);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      font-size: 52px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    header h1 span {
+      color: #6EDBA8;
+    }
+
+    header p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.72);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    /* MAIN LAYOUT */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    /* SECTION */
+    .section {
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .icon-green { background: var(--green-light); }
+    .icon-saffron { background: var(--saffron-light); }
+
+    .section-header h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .section-header p {
+      font-size: 13px;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    .section-body {
+      padding: 24px 28px;
+    }
+
+    /* DESCRIPTION BLOCK */
+    .description-text {
+      font-size: 16px;
+      color: var(--ink-soft);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .highlight-box {
+      background: var(--green-light);
+      border-left: 3px solid var(--green-mid);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 20px;
+      font-size: 15px;
+      color: var(--green-deep);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    /* SKELETON PAGES */
+    .pages-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .page-card {
+      background: var(--smoke);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+
+    .page-number {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--green-mid);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .page-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .page-desc {
+      font-size: 12px;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+
+    .page-group-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--green-mid);
+      margin: 20px 0 10px;
+    }
+
+    .page-group-label:first-child { margin-top: 0; }
+
+    /* TECH STACK */
+    .stack-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stack-row:last-child { border-bottom: none; }
+
+    .stack-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stack-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green-mid);
+      flex-shrink: 0;
+    }
+
+    .stack-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .stack-desc {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-top: 2px;
+    }
+
+    .stack-badge {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--green-light);
+      color: var(--green-deep);
+      white-space: nowrap;
+    }
+
+    .stack-badge.orange {
+      background: var(--saffron-light);
+      color: var(--saffron);
+    }
+
+    /* AI PLAN */
+    .ai-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .ai-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      padding: 0 0 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ai-table td {
+      padding: 14px 0;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .ai-table tr:last-child td { border-bottom: none; }
+
+    .ai-table td:first-child {
+      font-weight: 700;
+      color: var(--ink);
+      width: 30%;
+      padding-right: 16px;
+    }
+
+    .ai-table td:nth-child(2) {
+      color: var(--ink-soft);
+      width: 40%;
+      padding-right: 16px;
+    }
+
+    .tool-pill {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 6px;
+      background: var(--saffron-light);
+      color: var(--saffron);
+    }
+
+    .tool-pill.gray {
+      background: #F0F0F0;
+      color: #666;
+    }
+
+    /* UI/UX */
+    .color-palette {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .color-swatch {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swatch-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .swatch-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-soft);
+      text-align: center;
+    }
+
+    .swatch-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink);
+      text-align: center;
+    }
+
+    .ui-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+
+    .ui-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      min-width: 90px;
+      padding-top: 2px;
+    }
+
+    .ui-value {
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .ui-value strong {
+      color: var(--green-deep);
+    }
+
+    /* NAV STRUCTURE */
+    .nav-box {
+      background: var(--ink);
+      border-radius: 14px;
+      padding: 20px 24px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #A8C5B5;
+      line-height: 1.9;
+    }
+
+    .nav-box .nav-title {
+      color: #6EDBA8;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .nav-box .nav-item {
+      color: white;
+      padding-left: 16px;
+    }
+
+    .nav-box .nav-sub {
+      color: #A8C5B5;
+      padding-left: 32px;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 32px 24px 48px;
+      font-size: 13px;
+      color: var(--ink-soft);
+    }
+
+    footer strong {
+      color: var(--green-deep);
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 32px 20px; }
+      header h1 { font-size: 36px; }
+      .pages-grid { grid-template-columns: 1fr; }
+      .section-body { padding: 20px; }
+      .section-header { padding: 18px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">Sama Social — Build for Good Bharat</div>
+    <h1>Sehat<span>360</span></h1>
+    <p>Family Health Navigator for Indian families — medicines, government schemes, maternal care, child vaccination, aur health awareness — sab ek jagah.</p>
+  </header>
+
+  <main>
+
+    <!-- PROJECT DESCRIPTION -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-saffron">💡</div>
+        <div>
+          <h2>Project Description</h2>
+          <p>Hackathon submission brief</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <p class="description-text">
+          India mein crores log har mahine medicines pe zaroorat se zyada paisa kharch karte hain — kyunki unhe Jan Aushadhi ke baare mein nahi pata. Woh government health schemes ke liye eligible hain, par apply nahi kar paate — kyunki koi guide nahi karta. Pregnant women checkups miss karti hain — kyunki koi tracker nahi hai. Bachche vaccinations se peeche reh jaate hain — kyunki card kho jaata hai.
+        </p>
+        <p class="description-text">
+          Sehat360 yeh sab problems ek jagah solve karta hai. Yeh ek Progressive Web App hai jo Urban lower-middle class Indian families ke liye bana hai — especially woh mahila jo ghar ki health decisions manage karti hai.
+        </p>
+        <div class="highlight-box">
+          "Sehat360 — Apni sehat ka poora hisaab, ek jagah."
+        </div>
+      </div>
+    </div>
+
+    <!-- SKELETON -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">🗂️</div>
+        <div>
+          <h2>App Skeleton — 11 Pages</h2>
+          <p>Complete page structure with navigation</p>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <div class="page-group-label">Group 1 — Auth & Setup</div>
+        <div class="pages-grid">
+          <div class="page-card">
+            <div class="page-number">PAGE 01</div>
+            <div class="page-name">Landing Page</div>
+            <div class="page-desc">App naam, tagline, Login/Register button</div>
+          </div>
+          <div class="page-card">
+            <div class="page-number">PAGE 02</div>
+            <div class="page-name">Register / Login</div>
+            <div class="page-desc">Phone ya email se OTP based login</div>
+          </div>
+          <div class="page-card">
+            <div class="page-number">PAGE 03</div>
+            <div class="page-name">Onboarding</div>
+            <div class="page-desc">Feature selection checklist, basic profile setup</div>
+          </div>
+        </div>
+
+        <div class="page-group-label">Group 2 — Core Features</div>
+        <div class="pages-grid">
+          <div class="page-card">
+            <div class="page-number">PAGE 04</div>
+            <div class="page-name">Dashboard (Home)</div>
+            <div class="page-desc">Savings summary, reminders, quick actions</div>
+          </div>
+          <div class="page-card">
+            <div class="page-number">PAGE 05</div>
+            <div class="page-name">Prescription Savings</div>
+            <div class="page-desc">Upload karo, AI medicines read kare, savings dekho</div>
+          </div>
+          <div class="page-card">
+            <div class="page-number">PAGE 06</div>
+            <div class="page-name">Government Schemes</div>
+            <div class="page-desc">Eligibility check, schemes list, apply guide</div>
+          </div>
+          <div class="page-card">
+            <div class="page-number">PAGE 07</div>
+            <div class="page-name">Mother Care Timeline</div>
+            <div class="page-desc">Pregnancy week tracker, checkup reminders, AI guidance</div>
+          </div>
+          <div class="page-card">
+            <div class="page-number">PAGE 08</div>
+            <div class="page-name">Child Vaccination Tracker</div>
+            <div class="page-desc">NIS schedule, missed vaccines, nearest PHC</div>
+          </div>
+        </div>
+
+        <div class="page-group-label">Group 3 — Knowledge & Profile</div>
+        <div class="pages-grid">
+          <div class="page-card">
+            <div class="page-number">PAGE 09</div>
+            <div class="page-name">Health Awareness</div>
+            <div class="page-desc">Periods, pregnancy basics, anaemia, nutrition — Hindi mein</div>
+          </div>
+          <div class="page-card">
+            <div class="page-number">PAGE 10</div>
+            <div class="page-name">Health Wallet</div>
+            <div class="page-desc">Total savings, schemes unlocked, health milestones</div>
+          </div>
+          <div class="page-card">
+            <div class="page-number">PAGE 11</div>
+            <div class="page-name">Settings & Profile</div>
+            <div class="page-desc">Features on/off, family members, language switch</div>
+          </div>
+        </div>
+
+        <div class="page-group-label">Navigation Structure</div>
+        <div class="nav-box">
+          <div class="nav-title">Bottom Navigation Bar (5 items)</div>
+          <div class="nav-item">🏠 Home — Dashboard</div>
+          <div class="nav-item">💊 Prescription — Savings Engine</div>
+          <div class="nav-item">🏛️ Schemes — Government Benefits</div>
+          <div class="nav-item">❤️ Care — Pregnancy + Vaccination</div>
+          <div class="nav-item">⋯ More — Awareness + Wallet + Settings</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">⚙️</div>
+        <div>
+          <h2>Tech Stack</h2>
+          <p>Simple, free, production-ready enough for hackathon</p>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <div class="stack-row">
+          <div class="stack-left">
+            <div class="stack-dot"></div>
+            <div>
+              <div class="stack-name">React.js (PWA)</div>
+              <div class="stack-desc">Frontend — web + mobile dono pe chalega</div>
+            </div>
+          </div>
+          <div class="stack-badge">Frontend</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-left">
+            <div class="stack-dot"></div>
+            <div>
+              <div class="stack-name">Tailwind CSS + Shadcn/UI</div>
+              <div class="stack-desc">Styling — fast, clean, beautiful components</div>
+            </div>
+          </div>
+          <div class="stack-badge">UI</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-left">
+            <div class="stack-dot"></div>
+            <div>
+              <div class="stack-name">Supabase</div>
+              <div class="stack-desc">Database + Auth + Storage — sab free mein</div>
+            </div>
+          </div>
+          <div class="stack-badge">Backend</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-left">
+            <div class="stack-dot"></div>
+            <div>
+              <div class="stack-name">i18next</div>
+              <div class="stack-desc">Multilanguage — Hindi + English support</div>
+            </div>
+          </div>
+          <div class="stack-badge">Language</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-left">
+            <div class="stack-dot"></div>
+            <div>
+              <div class="stack-name">Gemini API + Tesseract.js</div>
+              <div class="stack-desc">AI layer — free tier, prescription reading</div>
+            </div>
+          </div>
+          <div class="stack-badge orange">AI</div>
+        </div>
+
+        <div class="stack-row">
+          <div class="stack-left">
+            <div class="stack-dot"></div>
+            <div>
+              <div class="stack-name">Vercel</div>
+              <div class="stack-desc">Deployment — free, instant, fast</div>
+            </div>
+          </div>
+          <div class="stack-badge">Deploy</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- AI PLAN -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-saffron">🤖</div>
+        <div>
+          <h2>AI Plan</h2>
+          <p>Kahan AI use hoga, kahan nahi</p>
+        </div>
+      </div>
+      <div class="section-body">
+        <table class="ai-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>AI kya karega</th>
+              <th>Tool</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Prescription Reading</td>
+              <td>Image se medicine names extract karna</td>
+              <td><span class="tool-pill">Tesseract.js</span></td>
+            </tr>
+            <tr>
+              <td>Medicine Mapping</td>
+              <td>Brand → salt → Jan Aushadhi alternative</td>
+              <td><span class="tool-pill">Gemini API</span></td>
+            </tr>
+            <tr>
+              <td>Scheme Matching</td>
+              <td>Profile se eligible schemes dhundhna</td>
+              <td><span class="tool-pill">Gemini API</span></td>
+            </tr>
+            <tr>
+              <td>Mother Care Guidance</td>
+              <td>"Week 24 mein kya karoon?" jaisi queries</td>
+              <td><span class="tool-pill">Gemini API</span></td>
+            </tr>
+            <tr>
+              <td>Vaccination Tracker</td>
+              <td>Fixed NIS schedule — AI zaroorat nahi</td>
+              <td><span class="tool-pill gray">No AI</span></td>
+            </tr>
+            <tr>
+              <td>Health Awareness</td>
+              <td>Pre-written content — AI zaroorat nahi</td>
+              <td><span class="tool-pill gray">No AI</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- UI/UX -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-green">🎨</div>
+        <div>
+          <h2>UI / UX Direction</h2>
+          <p>Visual identity for Sehat360</p>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <div class="page-group-label">Color Palette</div>
+        <div class="color-palette">
+          <div class="color-swatch">
+            <div class="swatch-box" style="background:#1A6B4A;"></div>
+            <div class="swatch-name">Deep Green</div>
+            <div class="swatch-label">#1A6B4A</div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-box" style="background:#2D9B6F;"></div>
+            <div class="swatch-name">Mid Green</div>
+            <div class="swatch-label">#2D9B6F</div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-box" style="background:#E8F5EE; border:1px solid #D4E8DC;"></div>
+            <div class="swatch-name">Light Green</div>
+            <div class="swatch-label">#E8F5EE</div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-box" style="background:#E8820C;"></div>
+            <div class="swatch-name">Saffron</div>
+            <div class="swatch-label">#E8820C</div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-box" style="background:#0F1C14;"></div>
+            <div class="swatch-name">Ink</div>
+            <div class="swatch-label">#0F1C14</div>
+          </div>
+          <div class="color-swatch">
+            <div class="swatch-box" style="background:#F4F8F5; border:1px solid #D4E8DC;"></div>
+            <div class="swatch-name">Smoke</div>
+            <div class="swatch-label">#F4F8F5</div>
+          </div>
+        </div>
+
+        <div class="page-group-label" style="margin-top:24px;">Typography</div>
+        <div class="ui-row">
+          <div class="ui-label">Display</div>
+          <div class="ui-value"><strong>Plus Jakarta Sans</strong> — Bold 700/800, headings ke liye</div>
+        </div>
+        <div class="ui-row">
+          <div class="ui-label">Body</div>
+          <div class="ui-value"><strong>Plus Jakarta Sans</strong> — Regular 400/500, readable</div>
+        </div>
+        <div class="ui-row">
+          <div class="ui-label">Data/Code</div>
+          <div class="ui-value"><strong>JetBrains Mono</strong> — Numbers, savings amounts ke liye</div>
+        </div>
+
+        <div class="page-group-label" style="margin-top:24px;">Design Principles</div>
+        <div class="ui-row">
+          <div class="ui-label">Feel</div>
+          <div class="ui-value">Warm + trustworthy — saathi jaisa, clinical nahi</div>
+        </div>
+        <div class="ui-row">
+          <div class="ui-label">Cards</div>
+          <div class="ui-value">Rounded corners (16–20px), soft shadows</div>
+        </div>
+        <div class="ui-row">
+          <div class="ui-label">Language</div>
+          <div class="ui-value">Hindi + English mixed labels — Indian context</div>
+        </div>
+        <div class="ui-row">
+          <div class="ui-label">Icons</div>
+          <div class="ui-value">Lucide React — clean, consistent</div>
+        </div>
+        <div class="ui-row">
+          <div class="ui-label">Savings</div>
+          <div class="ui-value">₹ symbol prominent, monospace font for numbers</div>
+        </div>
+        <div class="ui-row">
+          <div class="ui-label">Reference</div>
+          <div class="ui-value">Groww ki cleanliness + Headspace ki warmth</div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <strong>Sehat360</strong> — Sama Social Build for Good Bharat Hackathon &nbsp;·&nbsp; Apni sehat ka poora hisaab, ek jagah.
+  </footer>
+
+</body>
+</html>
