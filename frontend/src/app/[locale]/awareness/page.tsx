@@ -45,7 +45,7 @@ export default function AwarenessPage() {
       setLoading(true)
       try {
         // Fetch articles
-        let fetchedArticles = []
+        let fetchedArticles: any[] = []
         if (supabase) {
           const { data: artData, error: artErr } = await supabase.from('health_articles').select('*')
           if (!artErr && artData) {
