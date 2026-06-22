@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import './scrollbar.css';
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 240 20% 98%;
+    --foreground: 150 40% 8%;
+    --border: 138 30% 85%;
+    --ring: 154 60% 26%;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply font-sans bg-brand-smoke text-brand-ink antialiased tracking-tight;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Premium text selection */
+  ::selection {
+    @apply bg-brand-midGreen/20 text-brand-deepGreen;
+  }
+
+  /* Remove iOS tap highlight */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Accessible focus rings */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-deepGreen/50 ring-offset-2 ring-offset-brand-smoke transition-shadow;
+  }
+
+  /* 16px minimum for all inputs — prevents iOS zoom */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+@layer utilities {
+  /* App shell utility */
+  .app-shell {
+    @apply max-w-shell mx-auto min-h-dvh relative;
+  }
+
+  /* Mono numbers */
+  .rupee {
+    @apply font-mono font-bold;
+  }
+
+  /* Safe area padding for bottom nav - mobile only */
+  .nav-safe-padding {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Smooth scroll */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Responsive utilities */
+  @media (max-width: 767px) {
+    main {
+      padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+}

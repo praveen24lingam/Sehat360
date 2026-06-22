@@ -1,0 +1,15 @@
+
+> sehat360@0.1.0 dev
+> next dev -p 3000
+
+   ▲ Next.js 14.1.0
+   - Local:        http://localhost:3000
+   - Environments: .env.local
+
+ ✓ Ready in 7.7s
+ ○ Compiling /src/middleware ...
+ ✓ Compiled /src/middleware in 1848ms (80 modules)
+ ○ Compiling /[locale]/login ...
+ ✓ Compiled /[locale]/login in 36.7s (1654 modules)
+ ✓ Compiled in 1240ms (1639 modules)
+[?25h
