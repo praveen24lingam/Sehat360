@@ -51,8 +51,13 @@ export default function LoginPage() {
     setIsLoading(true)
     try {
       const { error } = await signIn(email, password)
-      if (error) throw error
-      router.push('/dashboard')
+      if (error) {
+        if (error.message.includes('Email not confirmed') || error.message.includes('Invalid login credentials')) {
+          throw new Error('Incorrect email or password, or your email may not be verified yet. Please check your inbox.')
+        }
+        throw error
+      }
+      // Success will cause AuthProvider to refresh, which triggers middleware to push to /dashboard
     } catch (err: any) {
       setError(err?.message || 'Invalid email or password.')
     } finally {

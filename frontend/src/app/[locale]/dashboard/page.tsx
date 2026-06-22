@@ -1,9 +1,11 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useUserStore } from '@/store/userStore'
-import { Bell, Pill, Building2, HeartPulse, Syringe, BookOpen, CheckCircle, ChevronRight, Settings, Plus } from 'lucide-react'
+import { Bell, Pill, Building2, HeartPulse, Syringe, BookOpen, CheckCircle, ChevronRight, Settings, Plus, Loader2 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { LanguageToggle } from '@/components/shared/LanguageToggle'
 import { CountUp } from '@/components/shared/CountUp'
@@ -13,14 +15,47 @@ import { Badge } from '@/components/ui/badge'
 import { AWARENESS_ARTICLES } from '@/data/awarenessArticles'
 import { calculatePregnancyWeek, calculateAgeInMonths, getVaccineStatus } from '@/lib/dates'
 import { FamilyMember } from '@/types'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 
 export default function DashboardPage() {
   const t = useTranslations()
-  const { profile, language, reminders, vaccinationRecords, getWalletData } = useUserStore()
+  const router = useRouter()
+  const { profile, setProfile, language, reminders, vaccinationRecords, getWalletData } = useUserStore()
   const wallet = getWalletData()
   const familyMembers = useUserStore(state => state.familyMembers)
+  const [isInitializing, setIsInitializing] = useState(true)
 
-  if (!profile) return null // Handled by auth guard in real scenario
+  useEffect(() => {
+    async function initProfile() {
+      if (!profile) {
+        if (isSupabaseConfigured) {
+          const { data: { session } } = await supabase!.auth.getSession()
+          if (session?.user) {
+            const { data, error } = await supabase!.from('profiles').select('*').eq('id', session.user.id).single()
+            if (data) {
+              setProfile(data)
+            } else {
+              router.push('/onboarding')
+            }
+          }
+        } else {
+          router.push('/onboarding')
+        }
+      }
+      setIsInitializing(false)
+    }
+    
+    initProfile()
+  }, [profile, router, setProfile])
+
+  if (isInitializing || !profile) {
+    return (
+      <div className="min-h-screen bg-brand-smoke flex flex-col items-center justify-center">
+        <Loader2 className="w-10 h-10 text-brand-deepGreen animate-spin mb-4" />
+        <p className="text-brand-inkSoft font-medium text-sm">Loading your health dashboard...</p>
+      </div>
+    )
+  }
 
   const activeFeatures = Object.entries(profile.features).filter(([_, enabled]) => enabled).map(([k]) => k)
 

@@ -15,6 +15,7 @@ interface AuthContextType {
   signInWithOtp: (email: string) => Promise<{ error: any }>
   verifyOtp: (email: string, token: string) => Promise<{ error: any }>
   resetPassword: (email: string) => Promise<{ error: any }>
+  resendVerification: (email: string) => Promise<{ error: any }>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -27,6 +28,7 @@ const AuthContext = createContext<AuthContextType>({
   signInWithOtp: async () => ({ error: null }),
   verifyOtp: async () => ({ error: null }),
   resetPassword: async () => ({ error: null }),
+  resendVerification: async () => ({ error: null }),
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -84,10 +86,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     })
+    
+    // Check if the user is a fake record indicating duplicate email
+    if (data?.user && data.user.identities && data.user.identities.length === 0) {
+      return { error: new Error('This email is already registered. Please login or reset your password.') }
+    }
+    
     return { error }
   }
 
@@ -115,9 +123,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
     return { error }
   }
+  
+  const resendVerification = async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+    })
+    return { error }
+  }
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut, signInWithOtp, verifyOtp, resetPassword }}>
+    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut, signInWithOtp, verifyOtp, resetPassword, resendVerification }}>
       {children}
     </AuthContext.Provider>
   )
