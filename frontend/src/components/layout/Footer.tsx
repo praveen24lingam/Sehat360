@@ -3,7 +3,7 @@ import { Heart } from 'lucide-react'
 
 export function Footer() {
   return (
-    <footer className="w-full bg-white border-t border-brand-border/60 py-12 mt-auto">
+    <footer className="w-full bg-white border-t border-brand-border/60 pt-12 pb-24 md:pb-12 mt-auto">
       <div className="max-w-shell-desktop mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         
         {/* Brand Column */}

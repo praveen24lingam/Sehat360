@@ -20,13 +20,15 @@ export default function AdminHealthPage() {
     title_en: '', title_hi: '',
     summary_en: '', summary_hi: '',
     category: 'nutrition',
-    content_en: '', content_hi: ''
+    content_en: '', content_hi: '',
+    author: 'SehatMitra Team', source_url: ''
   })
 
   // Video Form State
   const [video, setVideo] = useState({
     title_en: '', title_hi: '',
-    youtube_id: '', category: 'nutrition'
+    youtube_id: '', category: 'nutrition',
+    description_en: '', description_hi: '', source_url: ''
   })
 
   const handleAddArticle = async () => {
@@ -41,7 +43,7 @@ export default function AdminHealthPage() {
       const { error: sbErr } = await supabase.from('health_articles').insert([payload])
       if (sbErr) throw sbErr
       setMsg('Article added successfully!')
-      setArticle({ title_en: '', title_hi: '', summary_en: '', summary_hi: '', category: 'nutrition', content_en: '', content_hi: '' })
+      setArticle({ title_en: '', title_hi: '', summary_en: '', summary_hi: '', category: 'nutrition', content_en: '', content_hi: '', author: 'SehatMitra Team', source_url: '' })
     } catch (err: any) {
       setError(err?.message || 'Error adding article')
     }
@@ -55,7 +57,7 @@ export default function AdminHealthPage() {
       const { error: sbErr } = await supabase.from('health_videos').insert([video])
       if (sbErr) throw sbErr
       setMsg('Video added successfully!')
-      setVideo({ title_en: '', title_hi: '', youtube_id: '', category: 'nutrition' })
+      setVideo({ title_en: '', title_hi: '', youtube_id: '', category: 'nutrition', description_en: '', description_hi: '', source_url: '' })
     } catch (err: any) {
       setError(err?.message || 'Error adding video')
     }
@@ -109,6 +111,17 @@ export default function AdminHealthPage() {
                 <label className="text-sm font-bold text-brand-ink mb-1 block">Summary (Hindi)</label>
                 <Input value={article.summary_hi} onChange={e => setArticle({...article, summary_hi: e.target.value})} placeholder="Short description" />
               </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-bold text-brand-ink mb-1 block">Author</label>
+                <Input value={article.author} onChange={e => setArticle({...article, author: e.target.value})} placeholder="e.g. Ministry of Health" />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-brand-ink mb-1 block">Source URL (Optional)</label>
+                <Input value={article.source_url} onChange={e => setArticle({...article, source_url: e.target.value})} placeholder="https://..." />
+              </div>
+            </div>
             </div>
 
             <div>
@@ -167,6 +180,22 @@ export default function AdminHealthPage() {
                 <option value="mentalHealth">Mental Health</option>
                 <option value="periods">Periods</option>
               </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-bold text-brand-ink mb-1 block">Description (English)</label>
+                <Input value={video.description_en} onChange={e => setVideo({...video, description_en: e.target.value})} placeholder="Video info" />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-brand-ink mb-1 block">Description (Hindi)</label>
+                <Input value={video.description_hi} onChange={e => setVideo({...video, description_hi: e.target.value})} placeholder="Video info" />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-brand-ink mb-1 block">Source URL (Optional)</label>
+              <Input value={video.source_url} onChange={e => setVideo({...video, source_url: e.target.value})} placeholder="https://..." />
             </div>
 
             <Button onClick={handleAddVideo} disabled={loading} className="w-full h-12 bg-brand-deepGreen text-white rounded-xl mt-4">

@@ -4,6 +4,8 @@ import { BottomNav } from './BottomNav'
 import { SideNav } from './SideNav'
 import { TopNav } from './TopNav'
 import { DemoBanner } from '../shared/DemoBanner'
+import { InstallPWA } from '@/components/shared/InstallPWA'
+import { Toaster } from 'sonner'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { useState } from 'react'
 
@@ -40,6 +42,8 @@ export function AppShell({ children, hideNav = false }: AppShellProps) {
           </main>
         </div>
       </div>
+      <InstallPWA />
+      <Toaster position="top-center" richColors />
     </div>
   )
 }

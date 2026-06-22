@@ -12,6 +12,9 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signUp: (email: string, password: string) => Promise<{ error: any }>
   signOut: () => Promise<void>
+  signInWithOtp: (email: string) => Promise<{ error: any }>
+  verifyOtp: (email: string, token: string) => Promise<{ error: any }>
+  resetPassword: (email: string) => Promise<{ error: any }>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,7 +23,10 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signIn: async () => ({ error: null }),
   signUp: async () => ({ error: null }),
-  signOut: async () => {}
+  signOut: async () => {},
+  signInWithOtp: async () => ({ error: null }),
+  verifyOtp: async () => ({ error: null }),
+  resetPassword: async () => ({ error: null }),
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -90,8 +96,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.refresh()
   }
 
+  const signInWithOtp = async (email: string) => {
+    const { error } = await supabase.auth.signInWithOtp({ email })
+    return { error }
+  }
+
+  const verifyOtp = async (email: string, token: string) => {
+    const { error } = await supabase.auth.verifyOtp({ email, token, type: 'email' })
+    if (!error) {
+      router.refresh()
+    }
+    return { error }
+  }
+
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    return { error }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut, signInWithOtp, verifyOtp, resetPassword }}>
       {children}
     </AuthContext.Provider>
   )
