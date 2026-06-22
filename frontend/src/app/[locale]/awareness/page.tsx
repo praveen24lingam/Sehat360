@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { 
   Search, BookOpen, Share2, Info, ArrowRight, Droplets, Apple, Baby, 
@@ -219,7 +220,7 @@ export default function AwarenessPage() {
               {filteredVideos.map(video => (
                 <motion.div key={video.id} variants={itemVariants} onClick={() => setSelectedVideo(video)} className="bg-white border border-brand-border rounded-2xl overflow-hidden shadow-card hover:shadow-card-md transition-shadow cursor-pointer">
                   <div className="relative aspect-video w-full bg-brand-smoke overflow-hidden group">
-                    <img src={`https://img.youtube.com/vi/${video.youtube_id}/mqdefault.jpg`} alt={video.title[language]} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={`https://img.youtube.com/vi/${video.youtube_id}/mqdefault.jpg`} alt={video.title[language]} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                       <PlayCircle size={48} className="text-white drop-shadow-md" />
                     </div>

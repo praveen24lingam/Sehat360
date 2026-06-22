@@ -36,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="hi" suppressHydrationWarning className={`${plusJakartaSans.variable} ${jetBrainsMono.variable}`}>
       <head>
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className="font-sans bg-brand-smoke text-brand-ink antialiased">
