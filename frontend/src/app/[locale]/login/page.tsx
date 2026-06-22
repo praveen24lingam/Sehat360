@@ -170,7 +170,7 @@ export default function LoginPage() {
               priority
             />
           </div>
-          <h2 className="text-3xl lg:text-4xl font-black text-brand-ink mb-6">Your Family's Digital Health Companion</h2>
+          <h2 className="text-3xl lg:text-4xl font-black text-brand-ink mb-6">Your Family&apos;s Digital Health Companion</h2>
           <div className="flex flex-col gap-4 text-left w-full">
             <div className="flex items-center gap-4 bg-white/60 p-4 rounded-2xl backdrop-blur-sm border border-white">
               <div className="w-10 h-10 rounded-full bg-brand-deepGreen text-white flex items-center justify-center shrink-0">

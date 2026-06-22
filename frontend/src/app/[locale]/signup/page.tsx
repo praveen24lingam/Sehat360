@@ -210,7 +210,7 @@ export default function SignupPage() {
               
               <h1 className="text-2xl font-black text-brand-ink mb-3 tracking-tight">Check your email</h1>
               <p className="text-sm text-brand-inkSoft font-medium mb-8 px-2 leading-relaxed">
-                We've sent a verification link to <span className="text-brand-ink font-bold">{email}</span>. Please verify your email before logging in.
+                We&apos;ve sent a verification link to <span className="text-brand-ink font-bold">{email}</span>. Please verify your email before logging in.
               </p>
 
               {error && (
@@ -232,7 +232,7 @@ export default function SignupPage() {
                   onClick={() => router.push('/login')} 
                   className="w-full h-14 bg-gradient-premium text-white rounded-xl text-base font-bold shadow-button"
                 >
-                  I've verified my email
+                  I&apos;ve verified my email
                 </Button>
                 
                 <Button 
@@ -246,7 +246,7 @@ export default function SignupPage() {
               </div>
 
               <div className="mt-8 text-xs font-medium text-brand-inkSoft bg-brand-smoke px-4 py-3 rounded-xl border border-brand-border text-left w-full">
-                <strong>Didn't receive it?</strong><br/>
+                <strong>Didn&apos;t receive it?</strong><br/>
                 Check your Spam or Promotions folder. It might take a minute or two to arrive.
               </div>
             </motion.div>

@@ -45,7 +45,7 @@ export function InstallPWA() {
     }
 
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-  }, [isStandalone])
+  }, [isStandalone, isIOS])
 
   const handleInstallClick = async () => {
     if (deferredPrompt) {
@@ -80,7 +80,7 @@ export function InstallPWA() {
             <h4 className="font-bold text-sm mb-1">Install SehatMitra</h4>
             {isIOS && !deferredPrompt ? (
               <p className="text-xs text-white/80 leading-relaxed">
-                Tap the Share button below and select <strong>"Add to Home Screen"</strong> to install the app.
+                Tap the Share button below and select <strong>&quot;Add to Home Screen&quot;</strong> to install the app.
               </p>
             ) : (
               <p className="text-xs text-white/80 leading-relaxed mb-3">
