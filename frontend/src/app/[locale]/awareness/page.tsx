@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { 
   Search, BookOpen, Share2, Info, ArrowRight, Droplets, Apple, Baby, 
-  ShieldAlert, Activity, Smile, PlusSquare, AlertTriangle, Users, Youtube, PlayCircle
+  ShieldAlert, Activity, Smile, PlusSquare, AlertTriangle, Users, PlaySquare, PlayCircle
 } from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -152,7 +152,7 @@ export default function AwarenessPage() {
             <BookOpen size={16} /> Articles
           </button>
           <button onClick={() => setActiveTab('videos')} className={`flex-1 flex items-center justify-center gap-2 h-10 rounded-xl font-bold transition-colors ${activeTab === 'videos' ? 'bg-brand-deepGreen text-white' : 'bg-white border border-brand-border text-brand-inkSoft hover:bg-brand-smoke'}`}>
-            <Youtube size={16} /> Videos
+            <PlaySquare size={16} /> Videos
           </button>
         </div>
 
@@ -234,7 +234,7 @@ export default function AwarenessPage() {
               ))}
             </motion.div>
           ) : (
-            <EmptyState icon={Youtube} title="No videos found" description="Check back later for new health videos" actionLabel="Clear Search" onAction={() => { setSearchQuery(''); setActiveCategory('all') }} />
+            <EmptyState icon={PlaySquare} title="No videos found" description="Check back later for new health videos" actionLabel="Clear Search" onAction={() => { setSearchQuery(''); setActiveCategory('all') }} />
           )
         )}
       </div>

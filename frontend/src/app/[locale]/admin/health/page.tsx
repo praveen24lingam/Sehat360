@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { AlertCircle, Plus, Youtube, FileText } from 'lucide-react'
+import { AlertCircle, Plus, PlaySquare, FileText } from 'lucide-react'
 
 export default function AdminHealthPage() {
   const [activeTab, setActiveTab] = useState<'articles' | 'videos'>('articles')
@@ -80,7 +80,7 @@ export default function AdminHealthPage() {
             onClick={() => setActiveTab('videos')}
             className={`flex-1 rounded-xl h-12 ${activeTab === 'videos' ? 'bg-brand-deepGreen text-white' : 'text-brand-ink'}`}
           >
-            <Youtube className="mr-2" size={18} /> Add Video
+            <PlaySquare className="mr-2" size={18} /> Add Video
           </Button>
         </div>
 
