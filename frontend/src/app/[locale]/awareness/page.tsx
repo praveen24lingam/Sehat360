@@ -191,7 +191,27 @@ export default function AwarenessPage() {
             <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-4">
               {filteredArticles.map(article => (
                 <motion.div key={article.id} variants={itemVariants} onClick={() => setSelectedArticle(article)} className="bg-white border border-brand-border rounded-2xl overflow-hidden shadow-card hover:shadow-card-md transition-shadow cursor-pointer flex flex-col">
-                  <div className={`w-full h-1 bg-brand-deepGreen`} />
+                  {article.thumbnailUrl ? (
+                    <div className="relative w-full h-40 bg-brand-smoke overflow-hidden group">
+                      <Image 
+                        src={article.thumbnailUrl} 
+                        alt={article.title[language]} 
+                        fill 
+                        sizes="(max-width: 768px) 100vw, 50vw" 
+                        className="object-cover group-hover:scale-105 transition-transform duration-500" 
+                      />
+                    </div>
+                  ) : (
+                    <div className="relative w-full h-40 bg-brand-lightGreen overflow-hidden group flex items-center justify-center">
+                      <Image 
+                        src="/images/cat_nutrition.png" 
+                        alt={article.title[language]} 
+                        width={80}
+                        height={80}
+                        className="object-contain group-hover:scale-110 transition-transform duration-500" 
+                      />
+                    </div>
+                  )}
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-brand-lightGreen text-brand-deepGreen`}>
@@ -204,8 +224,10 @@ export default function AwarenessPage() {
                     <h3 className="text-base font-semibold text-brand-ink mb-1.5 line-clamp-2 leading-tight">{article.title[language]}</h3>
                     <p className="text-sm text-brand-inkSoft mb-3 line-clamp-3">{article.summary[language]}</p>
                     <div className="flex items-center justify-between text-brand-deepGreen pt-3 border-t border-brand-border border-dashed">
-                      <BookOpen size={16} />
-                      <span className="text-sm font-medium flex items-center gap-1">{t('awareness.read')} <ArrowRight size={14} /></span>
+                      <div className="flex items-center gap-1.5 text-sm font-medium">
+                        <BookOpen size={16} /> Read Article
+                      </div>
+                      <ArrowRight size={16} />
                     </div>
                   </div>
                 </motion.div>
