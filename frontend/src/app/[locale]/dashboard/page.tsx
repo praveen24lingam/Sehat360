@@ -20,21 +20,28 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 export default function DashboardPage() {
   const t = useTranslations()
   const router = useRouter()
-  const { profile, setProfile, language, reminders, vaccinationRecords, getWalletData } = useUserStore()
+  const { profile, familyMembers, setProfile, language, reminders, vaccinationRecords, getWalletData } = useUserStore()
   const wallet = getWalletData()
-  const familyMembers = useUserStore(state => state.familyMembers)
   const [isInitializing, setIsInitializing] = useState(true)
 
   useEffect(() => {
     async function initProfile() {
       if (!profile) {
         if (isSupabaseConfigured) {
-          const { data: { session } } = await supabase!.auth.getSession()
-          if (session?.user) {
-            const { data, error } = await supabase!.from('profiles').select('*').eq('id', session.user.id).single()
+          // Use getUser() — validates JWT with server, not just from local cookie
+          const { data: { user } } = await supabase!.auth.getUser()
+          if (user) {
+            const { data, error } = await supabase!.from('profiles').select('*').eq('id', user.id).single()
             if (data) {
               setProfile(data)
             } else {
+              if (error && error.code !== 'PGRST116') {
+                console.error('Supabase profile fetch error:', error.message)
+                if (error.message.includes('fetch') || error.message.includes('network')) {
+                  setIsInitializing(false)
+                  return
+                }
+              }
               router.push('/onboarding')
             }
           }
@@ -44,7 +51,7 @@ export default function DashboardPage() {
       }
       setIsInitializing(false)
     }
-    
+
     initProfile()
   }, [profile, router, setProfile])
 

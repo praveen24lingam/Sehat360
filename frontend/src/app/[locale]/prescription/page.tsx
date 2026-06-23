@@ -13,6 +13,7 @@ import { ErrorState } from '@/components/shared/ErrorState'
 import { extractPrescriptionText } from '@/lib/ocr'
 import { mapMedicinesFromText } from '@/lib/medicineMapper'
 import { useUserStore } from '@/store/userStore'
+import { useAuthContext } from '@/components/providers/AuthProvider'
 import { Medicine, Prescription } from '@/types'
 import { isGeminiConfigured } from '@/lib/gemini'
 
@@ -35,6 +36,7 @@ export default function PrescriptionPage() {
   const [errorReason, setErrorReason] = useState<'ocr_failed' | 'mapping_failed' | 'save_failed' | null>(null)
 
   const { addPrescription, prescriptions } = useUserStore()
+  const { user } = useAuthContext()
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -90,7 +92,14 @@ export default function PrescriptionPage() {
 
   const handleSave = () => {
     if (!mappedResult) return
-    const newPrescription: Prescription = { id: `rx-${Date.now()}`, userId: 'temp', medicines: mappedResult.medicines, totalMonthlySaving: mappedResult.monthly, totalYearlySaving: mappedResult.yearly, createdAt: new Date().toISOString() }
+    const newPrescription: Prescription = {
+      id: `rx-${Date.now()}`,
+      userId: user?.id ?? 'demo',
+      medicines: mappedResult.medicines,
+      totalMonthlySaving: mappedResult.monthly,
+      totalYearlySaving: mappedResult.yearly,
+      createdAt: new Date().toISOString(),
+    }
     addPrescription(newPrescription)
     window.location.href = '/wallet'
   }

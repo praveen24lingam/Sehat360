@@ -1,17 +1,33 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { AppShell } from '@/components/layout/AppShell'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { supabase } from '@/lib/supabase'
+import { useAuthContext } from '@/components/providers/AuthProvider'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { AlertCircle, Plus, PlaySquare, FileText } from 'lucide-react'
+import { AlertCircle, PlaySquare, FileText } from 'lucide-react'
+
+const ADMIN_EMAILS = (process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? '').split(',').map(e => e.trim().toLowerCase()).filter(Boolean)
 
 export default function AdminHealthPage() {
+  const { user, loading } = useAuthContext()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (loading) return
+    const email = user?.email?.toLowerCase() ?? ''
+    const isAdmin = ADMIN_EMAILS.length > 0 ? ADMIN_EMAILS.includes(email) : false
+    if (!user || !isAdmin) {
+      router.replace('/dashboard')
+    }
+  }, [user, loading, router])
+
   const [activeTab, setActiveTab] = useState<'articles' | 'videos'>('articles')
-  const [loading, setLoading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const [error, setError] = useState('')
 
@@ -32,7 +48,7 @@ export default function AdminHealthPage() {
   })
 
   const handleAddArticle = async () => {
-    setLoading(true); setMsg(''); setError('')
+    setIsSaving(true); setMsg(''); setError('')
     try {
       if (!supabase) throw new Error('Supabase not configured')
       const payload = {
@@ -47,11 +63,11 @@ export default function AdminHealthPage() {
     } catch (err: any) {
       setError(err?.message || 'Error adding article')
     }
-    setLoading(false)
+    setIsSaving(false)
   }
 
   const handleAddVideo = async () => {
-    setLoading(true); setMsg(''); setError('')
+    setIsSaving(true); setMsg(''); setError('')
     try {
       if (!supabase) throw new Error('Supabase not configured')
       const { error: sbErr } = await supabase.from('health_videos').insert([video])
@@ -61,7 +77,7 @@ export default function AdminHealthPage() {
     } catch (err: any) {
       setError(err?.message || 'Error adding video')
     }
-    setLoading(false)
+    setIsSaving(false)
   }
 
   return (
@@ -146,8 +162,8 @@ export default function AdminHealthPage() {
               </div>
             </div>
 
-            <Button onClick={handleAddArticle} disabled={loading} className="w-full h-12 bg-brand-deepGreen text-white rounded-xl mt-4">
-              {loading ? 'Adding...' : 'Save Article'}
+            <Button onClick={handleAddArticle} disabled={isSaving} className="w-full h-12 bg-brand-deepGreen text-white rounded-xl mt-4">
+              {isSaving ? 'Adding...' : 'Save Article'}
             </Button>
           </div>
         )}
@@ -198,8 +214,8 @@ export default function AdminHealthPage() {
               <Input value={video.source_url} onChange={e => setVideo({...video, source_url: e.target.value})} placeholder="https://..." />
             </div>
 
-            <Button onClick={handleAddVideo} disabled={loading} className="w-full h-12 bg-brand-deepGreen text-white rounded-xl mt-4">
-              {loading ? 'Adding...' : 'Save Video'}
+            <Button onClick={handleAddVideo} disabled={isSaving} className="w-full h-12 bg-brand-deepGreen text-white rounded-xl mt-4">
+              {isSaving ? 'Adding...' : 'Save Video'}
             </Button>
           </div>
         )}

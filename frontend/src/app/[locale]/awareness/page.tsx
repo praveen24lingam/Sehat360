@@ -48,7 +48,7 @@ export default function AwarenessPage() {
         // Fetch articles
         let fetchedArticles: any[] = []
         if (supabase) {
-          const { data: artData, error: artErr } = await supabase.from('health_articles').select('*')
+          const { data: artData, error: artErr } = await supabase.from('health_articles').select('*').range(0, 19)
           if (!artErr && artData) {
             fetchedArticles = artData.map(a => ({
               id: a.id,
@@ -72,7 +72,7 @@ export default function AwarenessPage() {
 
         // Fetch videos
         if (supabase) {
-          const { data: vidData, error: vidErr } = await supabase.from('health_videos').select('*')
+          const { data: vidData, error: vidErr } = await supabase.from('health_videos').select('*').range(0, 19)
           if (!vidErr && vidData) {
             setVideos(vidData.map(v => ({
               id: v.id,

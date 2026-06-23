@@ -73,9 +73,9 @@ export default function OnboardingPage() {
     setProfile(fullProfile)
     
     if (isSupabaseConfigured) {
-      const { data: { session } } = await supabase!.auth.getSession()
-      if (session?.user) {
-        await supabase!.from('profiles').upsert({ ...fullProfile, id: session.user.id })
+      const { data: { user } } = await supabase!.auth.getUser()
+      if (user) {
+        await supabase!.from('profiles').upsert({ ...fullProfile, id: user.id })
       }
     }
     router.push('/dashboard')

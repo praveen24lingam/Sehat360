@@ -1,9 +1,5 @@
 import { createBrowserClient } from '@supabase/ssr'
-
-export function resolveSupabaseUrl(url: string | undefined): string {
-  if (!url) return ''
-  return url.startsWith('https://') ? url : `https://${url.replace('sb_publishable_', '')}.supabase.co`
-}
+import { resolveSupabaseUrl } from './shared'
 
 export function createClient() {
   return createBrowserClient(

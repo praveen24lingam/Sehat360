@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { UserProfile, FamilyMember, Prescription, Scheme, VaccineRecord, FeatureFlags, WalletData, Reminder, SchemeAnswers } from '@/types'
 import { MOCK_PROFILE, MOCK_FAMILY, MOCK_PRESCRIPTION, MOCK_WALLET, MOCK_REMINDERS } from '@/data/mockData'
-import { isSupabaseConfigured } from '@/lib/supabase'
+import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 
 interface UserStore {
   profile: UserProfile | null
@@ -69,29 +69,96 @@ export const useUserStore = create<UserStore>()(
       
       setLanguage: (lang) => set({ language: lang }),
       
-      addFamilyMember: (member) => set((state) => ({ familyMembers: [...state.familyMembers, member] })),
-      updateFamilyMember: (id, patch) => set((state) => ({
-        familyMembers: state.familyMembers.map((m) => m.id === id ? { ...m, ...patch } : m)
-      })),
-      removeFamilyMember: (id) => set((state) => ({
-        familyMembers: state.familyMembers.filter((m) => m.id !== id)
-      })),
+      addFamilyMember: (member) => {
+        set((state) => ({ familyMembers: [...state.familyMembers, member] }))
+        if (isSupabaseConfigured && !get().isDemo) {
+          supabase?.from('family_members').insert({
+            id: member.id,
+            user_id: member.userId,
+            name: member.name,
+            relation: member.relation,
+            dob: member.dob,
+            gender: member.gender,
+            is_pregnant: member.isPregnant,
+            pregnancy_week: member.pregnancyWeek,
+            lmp_date: member.lmpDate
+          }).then(({ error }) => {
+            if (error) console.error('Supabase sync error', error)
+          })
+        }
+      },
+      updateFamilyMember: (id, patch) => {
+        set((state) => ({
+          familyMembers: state.familyMembers.map((m) => m.id === id ? { ...m, ...patch } : m)
+        }))
+        if (isSupabaseConfigured && !get().isDemo) {
+          const updateData: any = {}
+          if (patch.name !== undefined) updateData.name = patch.name
+          if (patch.relation !== undefined) updateData.relation = patch.relation
+          if (patch.dob !== undefined) updateData.dob = patch.dob
+          if (patch.gender !== undefined) updateData.gender = patch.gender
+          if (patch.isPregnant !== undefined) updateData.is_pregnant = patch.isPregnant
+          if (patch.pregnancyWeek !== undefined) updateData.pregnancy_week = patch.pregnancyWeek
+          if (patch.lmpDate !== undefined) updateData.lmp_date = patch.lmpDate
+          
+          supabase?.from('family_members').update(updateData).eq('id', id).then(({ error }) => {
+            if (error) console.error('Supabase sync error', error)
+          })
+        }
+      },
+      removeFamilyMember: (id) => {
+        set((state) => ({
+          familyMembers: state.familyMembers.filter((m) => m.id !== id)
+        }))
+        if (isSupabaseConfigured && !get().isDemo) {
+          supabase?.from('family_members').delete().eq('id', id).then(({ error }) => {
+            if (error) console.error('Supabase sync error', error)
+          })
+        }
+      },
       
-      addPrescription: (prescription) => set((state) => ({
-        prescriptions: [...state.prescriptions, prescription]
-      })),
+      addPrescription: (prescription) => {
+        set((state) => ({
+          prescriptions: [...state.prescriptions, prescription]
+        }))
+        if (isSupabaseConfigured && !get().isDemo) {
+          supabase?.from('prescriptions').insert({
+            id: prescription.id,
+            user_id: prescription.userId,
+            image_url: prescription.imageUrl,
+            raw_ocr_text: prescription.rawOcrText,
+            medicines: prescription.medicines,
+            total_monthly_saving: prescription.totalMonthlySaving,
+            total_yearly_saving: prescription.totalYearlySaving
+          }).then(({ error }) => {
+            if (error) console.error('Supabase sync error', error)
+          })
+        }
+      },
       
       setSchemeResults: (answers, schemes) => set({ schemeAnswers: answers, matchedSchemes: schemes }),
       
-      markVaccineDone: (memberId, vaccineId, doneDate) => set((state) => {
-        const records = state.vaccinationRecords[memberId] || [];
-        const updatedRecords = records.map(r => 
-          r.id === vaccineId ? { ...r, done: true, doneDate, status: 'done' as const } : r
-        );
-        return {
-          vaccinationRecords: { ...state.vaccinationRecords, [memberId]: updatedRecords }
-        };
-      }),
+      markVaccineDone: (memberId, vaccineId, doneDate) => {
+        set((state) => {
+          const records = state.vaccinationRecords[memberId] || [];
+          const updatedRecords = records.map(r =>
+            r.id === vaccineId ? { ...r, done: true, doneDate, status: 'done' as const } : r
+          );
+          return {
+            vaccinationRecords: { ...state.vaccinationRecords, [memberId]: updatedRecords }
+          };
+        })
+        if (isSupabaseConfigured && !get().isDemo) {
+          // Use update by member_id + vaccine_name (unique pair) instead of misusing local id
+          supabase?.from('vaccinations')
+            .update({ done: true, done_date: doneDate })
+            .eq('member_id', memberId)
+            .eq('vaccine_name', vaccineId)
+            .then(({ error }) => {
+              if (error) console.error('Supabase vaccination sync error', error)
+            })
+        }
+      },
       
       getPregnantMember: () => get().familyMembers.find(m => m.isPregnant),
       getChildMembers: () => get().familyMembers.filter(m => m.relation === 'child'),

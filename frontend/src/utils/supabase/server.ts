@@ -1,10 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-
-export function resolveSupabaseUrl(url: string | undefined): string {
-  if (!url) return ''
-  return url.startsWith('https://') ? url : `https://${url.replace('sb_publishable_', '')}.supabase.co`
-}
+import { resolveSupabaseUrl } from './shared'
 
 export function createClient() {
   const cookieStore = cookies()
@@ -20,19 +16,15 @@ export function createClient() {
         set(name: string, value: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value, ...options })
-          } catch (error) {
-            // The `set` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+          } catch {
+            // Called from a Server Component — safe to ignore, middleware handles refresh
           }
         },
         remove(name: string, options: CookieOptions) {
           try {
             cookieStore.set({ name, value: '', ...options })
-          } catch (error) {
-            // The `delete` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+          } catch {
+            // Called from a Server Component — safe to ignore, middleware handles refresh
           }
         },
       },

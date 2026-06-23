@@ -31,10 +31,10 @@ const AuthContext = createContext<AuthContextType>({
   resendVerification: async () => ({ error: null }),
 })
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+export function AuthProvider({ children, initialSession }: { children: ReactNode, initialSession?: Session | null }) {
+  const [user, setUser] = useState<User | null>(initialSession?.user ?? null)
+  const [session, setSession] = useState<Session | null>(initialSession ?? null)
+  const [loading, setLoading] = useState(!initialSession)
   const supabase = createClient()
   const router = useRouter()
 
@@ -42,11 +42,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true
 
     async function getInitialSession() {
+      if (initialSession) return;
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (mounted) {
+        // getUser() verifies the JWT with the Supabase server
+        const { data: { user } } = await supabase.auth.getUser()
+        if (mounted && user) {
+          const { data: { session } } = await supabase.auth.getSession()
           setSession(session)
-          setUser(session?.user ?? null)
+          setUser(user)
         }
       } catch (error) {
         console.error('Error fetching session:', error)
@@ -58,12 +61,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getInitialSession()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, newSession) => {
+      (event, newSession) => {
         if (mounted) {
           setSession(newSession)
           setUser(newSession?.user ?? null)
           setLoading(false)
-          router.refresh()
+          // Only refresh on meaningful auth transitions, not on every token refresh
+          if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+            router.refresh()
+          }
         }
       }
     )
@@ -72,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       mounted = false
       subscription.unsubscribe()
     }
-  }, [supabase, router])
+  }, [supabase, router, initialSession])
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -118,8 +124,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const resetPassword = async (email: string) => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : ''
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${origin}/reset-password`,
     })
     return { error }
   }

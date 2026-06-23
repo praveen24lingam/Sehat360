@@ -82,9 +82,9 @@ export default function SettingsPage() {
     const patch = { ...data, age: parseInt(data.age, 10) }
     updateProfile(patch)
     if (isSupabaseConfigured) {
-      const { data: { session } } = await supabase!.auth.getSession()
-      if (session?.user) {
-        await supabase!.from('profiles').update(patch).eq('id', session.user.id)
+      const { data: { user } } = await supabase!.auth.getUser()
+      if (user) {
+        await supabase!.from('profiles').update(patch).eq('id', user.id)
       }
     }
     setEditProfileOpen(false)

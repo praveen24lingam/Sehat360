@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { LanguageToggle } from '@/components/shared/LanguageToggle'
 import { Logo } from '@/components/shared/Logo'
 import { useAuthContext } from '@/components/providers/AuthProvider'
+import { isSupabaseConfigured } from '@/lib/supabase'
 import Link from 'next/link'
 
 type LoginMode = 'password' | 'otp_request' | 'otp_verify' | 'forgot_password'
@@ -273,6 +274,12 @@ export default function LoginPage() {
                 <span className="flex-shrink-0 mx-4 text-[10px] uppercase font-black tracking-wider text-brand-inkSoft">Or continue with</span>
                 <div className="flex-grow border-t border-brand-border/60"></div>
               </div>
+              
+              {!isSupabaseConfigured && (
+                <Button type="button" onClick={() => router.push('/dashboard')} variant="outline" className="w-full h-14 rounded-xl border-2 border-brand-deepGreen text-brand-deepGreen font-bold hover:bg-brand-smoke bg-brand-lightGreen mb-2">
+                  <Sparkles className="mr-2 text-brand-deepGreen" size={18} /> Continue in Demo Mode
+                </Button>
+              )}
               
               <Button type="button" onClick={() => setMode('otp_request')} variant="outline" className="w-full h-14 rounded-xl border-2 border-brand-border text-brand-ink font-bold hover:bg-brand-smoke bg-white">
                 <KeyRound className="mr-2 text-brand-deepGreen" size={18} /> Login with OTP
