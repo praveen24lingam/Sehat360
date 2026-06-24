@@ -64,39 +64,29 @@ export default function WalletPage() {
         
         {/* Total Savings Hero */}
         <section>
-          <div className="bg-gradient-to-br from-brand-deepGreen to-brand-midGreen rounded-2xl p-5 text-white mb-2 shadow-card-md">
-            <div className="text-white/70 text-xs mb-1">{t('wallet.totalLabel')}</div>
-            <div className="font-mono font-bold text-4xl mb-6">
-              <CountUp amount={wallet.totalSavings} />
-            </div>
-            
-            <div className="flex justify-between items-end mb-1">
-              <div className="text-white/60 text-xs">{t('wallet.targetLabel')}</div>
-              <div className="text-white/70 text-xs font-medium">{t('wallet.remaining', { amount: Math.max(0, 10000 - wallet.totalSavings).toLocaleString('en-IN') })}</div>
-            </div>
-            <div className="w-full bg-white/20 rounded-full h-2 overflow-hidden">
-              <div className="bg-white h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min((wallet.totalSavings / 10000) * 100, 100)}%` }} />
+          <div className="relative bg-gradient-to-br from-brand-deepGreen via-[#1f7d57] to-brand-midGreen rounded-3xl p-5 text-white shadow-card-lg overflow-hidden">
+            <div className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-white/5 pointer-events-none" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 rounded-full bg-black/5 pointer-events-none" />
+            <div className="relative z-10">
+              <p className="text-white/60 text-[11px] font-bold tracking-wide uppercase mb-1">{t('wallet.totalLabel')}</p>
+              <div className="font-mono font-black text-5xl text-white mb-5 leading-none">
+                <CountUp amount={wallet.totalSavings} />
+              </div>
+              <div className="flex justify-between items-center mb-1.5">
+                <p className="text-white/60 text-xs">{t('wallet.targetLabel')}</p>
+                <p className="text-white/80 text-xs font-semibold">{t('wallet.remaining', { amount: Math.max(0, 10000 - wallet.totalSavings).toLocaleString('en-IN') })} left</p>
+              </div>
+              <div className="w-full bg-white/20 rounded-full h-1.5 overflow-hidden">
+                <div className="bg-white h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min((wallet.totalSavings / 10000) * 100, 100)}%` }} />
+              </div>
             </div>
           </div>
-          
-          {prescriptions.length === 0 && (
-            <div className="mt-4">
-              <EmptyState 
-                icon={Pill} 
-                title={t('wallet.historyEmpty')} 
-                description="Scan prescriptions to see savings" 
-                actionLabel={t('wallet.historyCta')}
-                onAction={() => window.location.href = '/prescription'}
-                tone="feature"
-              />
-            </div>
-          )}
         </section>
 
-        {/* Stats Grid */}
+        {/* Stats Row */}
         <section>
-          <h2 className="text-base font-semibold text-brand-ink mb-3">{t('wallet.statsTitle')}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <p className="text-[11px] font-bold tracking-widest uppercase text-brand-inkSoft/60 mb-3">{t('wallet.statsTitle')}</p>
+          <div className="flex flex-col gap-2.5">
             {profile.features.prescription && (
               <StatCard icon={Pill} value={wallet.prescriptionsScanned} label={t('wallet.stat.prescriptions')} tone="green" />
             )}
@@ -112,7 +102,7 @@ export default function WalletPage() {
         {/* Prescription History */}
         {profile.features.prescription && prescriptions.length > 0 && (
           <section>
-            <h2 className="text-base font-semibold text-brand-ink mb-3">{t('wallet.historyTitle')}</h2>
+            <p className="text-[11px] font-bold tracking-widest uppercase text-brand-inkSoft/60 mb-3">{t('wallet.historyTitle')}</p>
             <div className="flex flex-col gap-2">
               {[...prescriptions].reverse().map((p, i) => (
                 <div key={p.id} className="bg-white border border-brand-border rounded-xl p-3 flex items-center justify-between shadow-sm">
@@ -142,7 +132,7 @@ export default function WalletPage() {
         {/* Schemes Unlocked */}
         {profile.features.schemes && (
           <section>
-            <h2 className="text-base font-semibold text-brand-ink mb-3">{t('wallet.schemesTitle')}</h2>
+            <p className="text-[11px] font-bold tracking-widest uppercase text-brand-inkSoft/60 mb-3">{t('wallet.schemesTitle')}</p>
             {eligibleSchemes.length > 0 ? (
               <div className="flex flex-col gap-3">
                 {eligibleSchemes.map(scheme => (
@@ -169,7 +159,7 @@ export default function WalletPage() {
 
         {/* Milestones */}
         <section className="mb-6">
-          <h2 className="text-base font-semibold text-brand-ink mb-3">{t('wallet.milestonesTitle')}</h2>
+          <p className="text-[11px] font-bold tracking-widest uppercase text-brand-inkSoft/60 mb-3">{t('wallet.milestonesTitle')}</p>
           <div className="bg-white border border-brand-border rounded-2xl p-4 shadow-sm">
             {MILESTONES.map((m, i) => (
               <div key={m.id} className={`flex items-center justify-between py-3 ${i !== MILESTONES.length - 1 ? 'border-b border-brand-border' : ''} ${m.done ? 'text-brand-ink' : 'text-brand-inkSoft opacity-60'}`}>

@@ -146,34 +146,46 @@ export default function AwarenessPage() {
     <AppShell>
       <PageHeader title={t('awareness.title')} subtitle={t('awareness.subtitle')} rightSlot={<LanguageToggle compact />} />
 
-      <div className="sticky top-[52px] z-10 bg-brand-smoke/95 backdrop-blur-sm px-4 py-2 border-b border-brand-border shadow-sm flex flex-col gap-3">
-        {/* Type Tabs */}
-        <div className="flex gap-2">
-          <button onClick={() => setActiveTab('articles')} className={`flex-1 flex items-center justify-center gap-2 h-10 rounded-xl font-bold transition-colors ${activeTab === 'articles' ? 'bg-brand-deepGreen text-white' : 'bg-white border border-brand-border text-brand-inkSoft hover:bg-brand-smoke'}`}>
-            <BookOpen size={16} /> Articles
-          </button>
-          <button onClick={() => setActiveTab('videos')} className={`flex-1 flex items-center justify-center gap-2 h-10 rounded-xl font-bold transition-colors ${activeTab === 'videos' ? 'bg-brand-deepGreen text-white' : 'bg-white border border-brand-border text-brand-inkSoft hover:bg-brand-smoke'}`}>
-            <PlaySquare size={16} /> Videos
-          </button>
+      <div className="sticky top-[56px] z-10 bg-brand-smoke/95 backdrop-blur-sm border-b border-brand-border/60">
+        {/* Tab + Search row */}
+        <div className="flex items-center gap-2 px-4 pt-3 pb-2">
+          <div className="flex gap-1 bg-white border border-brand-border rounded-xl p-1 shrink-0">
+            <button
+              onClick={() => setActiveTab('articles')}
+              className={`flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-bold transition-colors ${activeTab === 'articles' ? 'bg-brand-deepGreen text-white shadow-sm' : 'text-brand-inkSoft'}`}
+            >
+              <BookOpen size={13} /> Articles
+            </button>
+            <button
+              onClick={() => setActiveTab('videos')}
+              className={`flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-bold transition-colors ${activeTab === 'videos' ? 'bg-brand-deepGreen text-white shadow-sm' : 'text-brand-inkSoft'}`}
+            >
+              <PlaySquare size={13} /> Videos
+            </button>
+          </div>
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-inkSoft/60" size={14} />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('awareness.search')}
+              className="w-full h-9 pl-8 pr-3 rounded-xl border border-brand-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-deepGreen/30"
+            />
+          </div>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-inkSoft" size={16} />
-          <input
-            type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t('awareness.search')}
-            className="w-full h-10 pl-10 pr-4 rounded-xl border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-deepGreen text-sm"
-          />
-        </div>
-        
-        {/* Categories */}
-        <div className="flex overflow-x-auto gap-2 pb-2 scrollbar-hide -mx-4 px-4 snap-x">
+        {/* Category pills */}
+        <div className="flex overflow-x-auto gap-1.5 pb-2.5 px-4 scrollbar-hide snap-x">
           {categories.map(cat => (
             <button
-              key={cat} onClick={() => { setActiveCategory(cat); setSearchQuery('') }}
-              className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm snap-start transition-colors font-medium
-                ${activeCategory === cat ? 'bg-brand-deepGreen text-white' : 'bg-white border border-brand-border text-brand-inkSoft hover:bg-brand-smoke'}`}
+              key={cat}
+              onClick={() => { setActiveCategory(cat); setSearchQuery('') }}
+              className={`flex-shrink-0 h-7 px-3 rounded-full text-[11px] font-semibold snap-start transition-colors ${
+                activeCategory === cat
+                  ? 'bg-brand-ink text-white'
+                  : 'bg-white border border-brand-border text-brand-inkSoft'
+              }`}
             >
               {t(`awareness.category.${cat}` as any)}
             </button>
@@ -184,54 +196,66 @@ export default function AwarenessPage() {
       <div className="p-4 pb-10">
         {loading ? (
           <div className="flex flex-col gap-4">
-            {[1, 2, 3].map(i => <div key={i} className="bg-white border border-brand-border rounded-2xl p-4 h-[180px] animate-pulse" />)}
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-white border border-brand-border rounded-2xl overflow-hidden shadow-card">
+                <div className="skeleton h-36 w-full rounded-none" />
+                <div className="p-4 flex flex-col gap-2">
+                  <div className="skeleton h-4 w-24 rounded-md" />
+                  <div className="skeleton h-5 w-3/4 rounded-md" />
+                  <div className="skeleton h-4 w-full rounded-md" />
+                  <div className="skeleton h-4 w-2/3 rounded-md" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : activeTab === 'articles' ? (
           filteredArticles.length > 0 ? (
-            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-4">
-              {filteredArticles.map(article => (
-                <motion.div key={article.id} variants={itemVariants} onClick={() => setSelectedArticle(article)} className="bg-white border border-brand-border rounded-2xl overflow-hidden shadow-card hover:shadow-card-md transition-shadow cursor-pointer flex flex-col">
-                  {article.thumbnailUrl ? (
-                    <div className="relative w-full h-40 bg-brand-smoke overflow-hidden group">
-                      <Image 
-                        src={article.thumbnailUrl} 
-                        alt={article.title[language]} 
-                        fill 
-                        sizes="(max-width: 768px) 100vw, 50vw" 
-                        className="object-cover group-hover:scale-105 transition-transform duration-500" 
-                      />
-                    </div>
-                  ) : (
-                    <div className="relative w-full h-40 bg-brand-lightGreen overflow-hidden group flex items-center justify-center">
-                      <Image 
-                        src="/images/cat_nutrition.png" 
-                        alt={article.title[language]} 
-                        width={80}
-                        height={80}
-                        className="object-contain group-hover:scale-110 transition-transform duration-500" 
-                      />
-                    </div>
-                  )}
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-brand-lightGreen text-brand-deepGreen`}>
-                        {t(`awareness.category.${article.category}` as any)}
-                      </span>
-                      <span className="text-[10px] font-semibold text-brand-inkSoft bg-brand-smoke px-1.5 py-0.5 rounded">
-                        {t('awareness.readTime', { n: article.readTimeMinutes || 5 })}
-                      </span>
-                    </div>
-                    <h3 className="text-base font-semibold text-brand-ink mb-1.5 line-clamp-2 leading-tight">{article.title[language]}</h3>
-                    <p className="text-sm text-brand-inkSoft mb-3 line-clamp-3">{article.summary[language]}</p>
-                    <div className="flex items-center justify-between text-brand-deepGreen pt-3 border-t border-brand-border border-dashed">
-                      <div className="flex items-center gap-1.5 text-sm font-medium">
-                        <BookOpen size={16} /> Read Article
+            <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col gap-3">
+              {filteredArticles.map((article, idx) => {
+                const toneMap: Record<string, { border: string; bg: string; label: string }> = {
+                  green:   { border: 'border-brand-deepGreen/30', bg: 'bg-brand-lightGreen/60',   label: 'bg-brand-lightGreen text-brand-deepGreen' },
+                  pink:    { border: 'border-brand-pink/30',      bg: 'bg-brand-pinkLight/60',    label: 'bg-brand-pinkLight text-brand-pink' },
+                  blue:    { border: 'border-brand-blue/30',      bg: 'bg-brand-blueLight/60',    label: 'bg-brand-blueLight text-brand-blue' },
+                  red:     { border: 'border-brand-danger/30',    bg: 'bg-brand-dangerLight/60',  label: 'bg-brand-dangerLight text-brand-danger' },
+                  saffron: { border: 'border-brand-saffron/30',   bg: 'bg-brand-saffronLight/60', label: 'bg-brand-saffronLight text-brand-saffron' },
+                }
+                const tone = toneMap[article.tone] || toneMap.green
+
+                return (
+                  <motion.div
+                    key={article.id}
+                    variants={itemVariants}
+                    onClick={() => setSelectedArticle(article)}
+                    className={`bg-white border ${tone.border} rounded-2xl overflow-hidden shadow-card cursor-pointer active:scale-[0.98] transition-all`}
+                  >
+                    {article.thumbnailUrl ? (
+                      <div className="relative w-full h-36 overflow-hidden">
+                        <Image src={article.thumbnailUrl} alt={article.title[language]} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
                       </div>
-                      <ArrowRight size={16} />
+                    ) : (
+                      <div className={`w-full h-2 ${tone.bg}`} />
+                    )}
+                    <div className="p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${tone.label}`}>
+                          {t(`awareness.category.${article.category}` as any)}
+                        </span>
+                        <span className="text-[10px] font-semibold text-brand-inkSoft">
+                          {t('awareness.readTime', { n: article.readTimeMinutes || 5 })}
+                        </span>
+                      </div>
+                      <h3 className="text-[15px] font-bold text-brand-ink line-clamp-2 leading-snug mb-1.5">
+                        {article.title[language]}
+                      </h3>
+                      <p className="text-sm text-brand-inkSoft line-clamp-2 leading-relaxed">{article.summary[language]}</p>
+                      <div className="flex items-center gap-1 mt-3 text-brand-deepGreen">
+                        <span className="text-xs font-bold">Read more</span>
+                        <ArrowRight size={14} />
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                )
+              })}
             </motion.div>
           ) : (
             <EmptyState icon={Search} title={t('awareness.empty')} description="" actionLabel={t('awareness.emptyAction')} onAction={() => { setSearchQuery(''); setActiveCategory('all') }} />

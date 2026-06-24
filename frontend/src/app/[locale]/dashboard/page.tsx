@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { useUserStore } from '@/store/userStore'
-import { Bell, Pill, Building2, HeartPulse, Syringe, BookOpen, CheckCircle, ChevronRight, Settings, Plus, Loader2 } from 'lucide-react'
+import {
+  Bell, Pill, Building2, HeartPulse, Syringe,
+  BookOpen, CheckCircle, ChevronRight, Plus, Loader2,
+  TrendingUp, AlertCircle, Wallet
+} from 'lucide-react'
 import { AppShell } from '@/components/layout/AppShell'
 import { LanguageToggle } from '@/components/shared/LanguageToggle'
 import { CountUp } from '@/components/shared/CountUp'
@@ -28,7 +32,6 @@ export default function DashboardPage() {
     async function initProfile() {
       if (!profile) {
         if (isSupabaseConfigured) {
-          // Use getUser() — validates JWT with server, not just from local cookie
           const { data: { user } } = await supabase!.auth.getUser()
           if (user) {
             const { data, error } = await supabase!.from('profiles').select('*').eq('id', user.id).single()
@@ -51,15 +54,14 @@ export default function DashboardPage() {
       }
       setIsInitializing(false)
     }
-
     initProfile()
   }, [profile, router, setProfile])
 
   if (isInitializing || !profile) {
     return (
-      <div className="min-h-screen bg-brand-smoke flex flex-col items-center justify-center">
-        <Loader2 className="w-10 h-10 text-brand-deepGreen animate-spin mb-4" />
-        <p className="text-brand-inkSoft font-medium text-sm">Loading your health dashboard...</p>
+      <div className="min-h-screen bg-brand-smoke flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-8 h-8 text-brand-deepGreen animate-spin" />
+        <p className="text-brand-inkSoft text-sm font-medium">Loading...</p>
       </div>
     )
   }
@@ -68,11 +70,9 @@ export default function DashboardPage() {
 
   const getFamilyStatus = (member: FamilyMember) => {
     if (member.isPregnant) return { label: t('dashboard.status.pregnant'), bg: 'bg-brand-pinkLight', text: 'text-brand-pink' }
-    
     const records = vaccinationRecords[member.id] || []
     const hasOverdue = records.some(r => !r.done && getVaccineStatus(r.dueDate, r.done) === 'overdue')
     if (hasOverdue) return { label: t('dashboard.status.vaccineDue'), bg: 'bg-brand-dangerLight', text: 'text-brand-danger' }
-    
     if (member.relation === 'child' && member.dob) {
       const ageMonths = calculateAgeInMonths(member.dob)
       return { label: t('dashboard.status.months', { age: ageMonths }), bg: 'bg-brand-saffronLight', text: 'text-brand-saffron' }
@@ -80,283 +80,304 @@ export default function DashboardPage() {
     return null
   }
 
-  const tip = profile.features.pregnancy 
+  const tip = profile.features.pregnancy
     ? AWARENESS_ARTICLES.find(a => a.category === 'pregnancy') || AWARENESS_ARTICLES[0]
     : AWARENESS_ARTICLES[0]
 
-  // For vaccination action subtitle: using wallet stats instead of family iteration to be quick
-  const totalVaccines = 0 // In real app, calculate actual count
-  const doneVaccines = 0
+  const firstName = profile.name.split(' ')[0]
+  const urgentReminders = reminders.filter(r => r.urgency === 'urgent')
+  const savingsGoal = 10000
+  const savingsPercent = Math.min(100, Math.round((wallet.totalSavings / savingsGoal) * 100))
 
   return (
     <AppShell>
       {/* TopBar */}
-      <div className="sticky top-0 bg-brand-smoke/95 backdrop-blur-sm z-10 py-3 px-4 flex items-center justify-between h-[52px]">
-        <div className="flex flex-col">
-          <span className="text-brand-inkSoft text-sm leading-none mb-0.5">{t('dashboard.greeting', { name: '' }).replace(', ', '')}</span>
-          <span className="text-brand-ink text-base font-semibold leading-none">{profile.name.split(' ')[0]}</span>
+      <div className="sticky top-0 bg-brand-smoke/95 backdrop-blur-sm z-10 h-[56px] flex items-center justify-between px-4">
+        <div>
+          <p className="text-[11px] text-brand-inkSoft font-medium leading-none mb-0.5">{t('dashboard.greeting', { name: '' }).replace(', ', '')}</p>
+          <p className="text-base font-bold text-brand-ink leading-none">{firstName}</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <LanguageToggle compact />
-          <div className="relative">
-            <Bell size={20} className="text-brand-ink" />
-            {reminders.length > 0 && <div className="absolute top-0 right-0 w-2 h-2 bg-brand-saffron rounded-full border border-brand-smoke" />}
-          </div>
+          <button className="relative w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-brand-border shadow-sm" aria-label="Notifications">
+            <Bell size={18} className="text-brand-ink" />
+            {urgentReminders.length > 0 && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-saffron rounded-full border-2 border-white" />
+            )}
+          </button>
         </div>
       </div>
 
-      <div className="p-4 md:p-6 lg:p-8 flex flex-col gap-6 md:gap-8 pb-20 md:pb-6">
-        
-        {/* SavingsHero Card - 2 columns on desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {profile.features.prescription ? (
-            <div className="lg:col-span-2 bg-gradient-to-br from-brand-deepGreen to-brand-midGreen rounded-2xl p-5 md:p-6 text-white shadow-card-md">
-              <div className="flex justify-between items-start mb-2">
-                <div className="text-white/70 text-xs md:text-sm">{t('dashboard.savings.totalLabel')}</div>
-                <div className="bg-white/20 px-2 py-0.5 rounded text-[10px]">Jan Aushadhi</div>
+      <div className="px-4 md:px-6 lg:px-8 pb-24 md:pb-8 flex flex-col gap-7">
+
+        {/* ── Savings Hero ── */}
+        {profile.features.prescription ? (
+          <div className="relative bg-gradient-to-br from-brand-deepGreen via-[#1f7d57] to-brand-midGreen rounded-3xl overflow-hidden shadow-card-lg mt-2">
+            {/* Decorative circles */}
+            <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full bg-white/5 pointer-events-none" />
+            <div className="absolute -bottom-12 -left-12 w-48 h-48 rounded-full bg-black/5 pointer-events-none" />
+
+            <div className="relative z-10 p-5 md:p-6">
+              <div className="flex items-start justify-between mb-3">
+                <div>
+                  <p className="text-white/60 text-xs font-semibold tracking-wide uppercase">{t('dashboard.savings.totalLabel')}</p>
+                  <div className="font-mono font-black text-4xl text-white mt-1 leading-none">
+                    <CountUp amount={wallet.totalSavings} />
+                  </div>
+                </div>
+                <Link href="/wallet" className="flex items-center gap-1 bg-white/15 hover:bg-white/25 transition-colors text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                  <Wallet size={13} />
+                  {t('dashboard.walletLink')}
+                </Link>
               </div>
-              <div className="font-mono font-bold text-4xl md:text-5xl mb-4">
-                <CountUp amount={wallet.totalSavings} />
+
+              {/* Savings progress toward ₹10k goal */}
+              <div className="mb-3">
+                <div className="flex justify-between items-center mb-1.5">
+                  <span className="text-white/60 text-[11px] font-medium">Progress to ₹10,000 goal</span>
+                  <span className="text-white text-[11px] font-bold">{savingsPercent}%</span>
+                </div>
+                <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-white rounded-full transition-all duration-1000"
+                    style={{ width: `${savingsPercent}%` }}
+                  />
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <div className="bg-white/10 rounded-full px-2 py-0.5 text-xs">{t('dashboard.savings.monthly', { amount: wallet.monthlySavings })}</div>
-                <div className="bg-white/10 rounded-full px-2 py-0.5 text-xs">{t('dashboard.savings.prescriptions', { count: wallet.prescriptionsScanned })}</div>
-                {profile.features.schemes && (
-                  <div className="bg-white/10 rounded-full px-2 py-0.5 text-xs">{t('dashboard.savings.schemes', { count: wallet.schemesUnlocked })}</div>
+
+              <div className="flex flex-wrap gap-2">
+                <span className="bg-white/15 text-white/90 text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                  {t('dashboard.savings.monthly', { amount: wallet.monthlySavings })}
+                </span>
+                <span className="bg-white/15 text-white/90 text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                  {t('dashboard.savings.prescriptions', { count: wallet.prescriptionsScanned })}
+                </span>
+                {profile.features.schemes && wallet.schemesUnlocked > 0 && (
+                  <span className="bg-white/15 text-white/90 text-[11px] font-semibold px-2.5 py-1 rounded-full">
+                    {t('dashboard.savings.schemes', { count: wallet.schemesUnlocked })} schemes
+                  </span>
                 )}
               </div>
-              <Link href="/wallet" className="text-white/80 text-sm flex items-center gap-1 hover:text-white transition-colors">
-                {t('dashboard.walletLink')} <ChevronRight size={16} />
-              </Link>
-            </div>
-          ) : (
-            <div className="lg:col-span-2 bg-white border border-brand-border rounded-2xl p-5 md:p-6 shadow-card">
-              <div className="text-sm font-semibold mb-3">{t('dashboard.savings.featuresDisabled')}</div>
-              <div className="flex flex-wrap gap-2">
-                {activeFeatures.map(k => (
-                  <Badge key={k} variant="secondary" className="bg-brand-lightGreen text-brand-deepGreen border-none">{t(`features.${k}` as any)}</Badge>
-                ))}
-              </div>
-            </div>
-          )}
-          
-          {/* Stats summary card for desktop */}
-          <div className="hidden lg:flex bg-white border border-brand-border rounded-2xl p-6 shadow-card flex-col justify-between">
-            <div>
-              <div className="text-brand-inkSoft text-sm mb-1">Monthly Savings</div>
-              <div className="font-mono font-bold text-2xl text-brand-deepGreen">₹{wallet.monthlySavings}</div>
-            </div>
-            <div className="border-t border-brand-border pt-4 mt-4">
-              <div className="text-brand-inkSoft text-sm mb-1">Total Prescriptions</div>
-              <div className="font-mono font-bold text-2xl text-brand-ink">{wallet.prescriptionsScanned}</div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="mt-2 bg-white border border-brand-border rounded-2xl p-4 shadow-card">
+            <p className="text-sm font-semibold text-brand-ink mb-2">{t('dashboard.savings.featuresDisabled')}</p>
+            <div className="flex flex-wrap gap-2">
+              {activeFeatures.map(k => (
+                <Badge key={k} variant="secondary" className="bg-brand-lightGreen text-brand-deepGreen border-none">{t(`features.${k}` as any)}</Badge>
+              ))}
+            </div>
+          </div>
+        )}
 
-        {/* Quick Actions Grid - 2 cols mobile, 3 tablet, 4 desktop */}
+        {/* ── Urgent Reminders (if any) ── */}
+        {urgentReminders.length > 0 && (
+          <div className="bg-brand-saffronLight border border-brand-saffron/20 rounded-2xl p-4 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-brand-saffron/20 flex items-center justify-center shrink-0 mt-0.5">
+              <AlertCircle size={16} className="text-brand-saffron" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-brand-ink mb-0.5">{urgentReminders.length} urgent action{urgentReminders.length > 1 ? 's' : ''} needed</p>
+              <p className="text-xs text-brand-inkSoft font-medium truncate">{language === 'hi' ? urgentReminders[0].titleHi : urgentReminders[0].title}</p>
+            </div>
+            <Link href={urgentReminders[0].linkedRoute} className="text-brand-saffron shrink-0">
+              <ChevronRight size={20} />
+            </Link>
+          </div>
+        )}
+
+        {/* ── Quick Actions ── */}
         <section>
-          <h2 className="text-base md:text-lg font-semibold text-brand-ink mb-3 md:mb-4">{t('dashboard.actionsTitle')}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-            {profile.features.prescription && (
-              <Link href="/prescription" className="bg-white border border-brand-border rounded-2xl p-4 md:p-5 shadow-card hover:shadow-card-md transition-shadow relative">
-                <div className="w-10 h-10 rounded-xl bg-brand-lightGreen flex items-center justify-center mb-2">
-                  <Pill size={20} className="text-brand-deepGreen" />
+          <p className="section-label mb-3">{t('dashboard.actionsTitle')}</p>
+
+          {/* Primary action — prescription is the hero */}
+          {profile.features.prescription && (
+            <Link href="/prescription" className="block bg-white border border-brand-border rounded-2xl shadow-card p-4 mb-3 active:scale-[0.98] transition-all">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-brand-lightGreen flex items-center justify-center shrink-0">
+                  <Pill size={24} className="text-brand-deepGreen" />
                 </div>
-                <h3 className="text-sm font-semibold text-brand-ink mb-0.5">{t('dashboard.action.prescription.title')}</h3>
-                <p className="text-xs text-brand-inkSoft leading-tight">{t('dashboard.action.prescription.subtitle', { amount: wallet.monthlySavings })}</p>
-              </Link>
-            )}
-            
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-brand-ink">{t('dashboard.action.prescription.title')}</h3>
+                  <p className="text-sm text-brand-inkSoft font-medium">{t('dashboard.action.prescription.subtitle', { amount: wallet.monthlySavings })}</p>
+                </div>
+                <div className="flex items-center gap-1 text-brand-deepGreen">
+                  <TrendingUp size={16} />
+                  <ChevronRight size={18} />
+                </div>
+              </div>
+            </Link>
+          )}
+
+          {/* Secondary actions — 2-column grid */}
+          <div className="grid grid-cols-2 gap-3">
             {profile.features.schemes && (
-              <Link href="/schemes" className="bg-white border border-brand-border rounded-2xl p-4 md:p-5 shadow-card hover:shadow-card-md transition-shadow relative">
-                <div className="w-10 h-10 rounded-xl bg-brand-blueLight flex items-center justify-center mb-2">
+              <Link href="/schemes" className="bg-brand-blueLight border border-brand-blue/15 rounded-2xl p-4 active:scale-[0.97] transition-all">
+                <div className="w-10 h-10 rounded-xl bg-brand-blue/15 flex items-center justify-center mb-3">
                   <Building2 size={20} className="text-brand-blue" />
                 </div>
-                <h3 className="text-sm font-semibold text-brand-ink mb-0.5">{t('dashboard.action.schemes.title')}</h3>
-                <p className="text-xs text-brand-inkSoft leading-tight">{t('dashboard.action.schemes.subtitle', { count: wallet.schemesUnlocked })}</p>
+                <h3 className="text-sm font-bold text-brand-ink leading-tight">{t('dashboard.action.schemes.title')}</h3>
+                <p className="text-[11px] text-brand-blue font-semibold mt-0.5">
+                  {wallet.schemesUnlocked > 0 ? `${wallet.schemesUnlocked} matched` : 'Check eligibility'}
+                </p>
               </Link>
             )}
 
             {profile.features.pregnancy && (
-              <Link href="/mother-care" className="bg-white border border-brand-border rounded-2xl p-4 md:p-5 shadow-card hover:shadow-card-md transition-shadow relative">
-                <div className="w-10 h-10 rounded-xl bg-brand-pinkLight flex items-center justify-center mb-2">
+              <Link href="/mother-care" className="bg-brand-pinkLight border border-brand-pink/15 rounded-2xl p-4 active:scale-[0.97] transition-all">
+                <div className="w-10 h-10 rounded-xl bg-brand-pink/15 flex items-center justify-center mb-3">
                   <HeartPulse size={20} className="text-brand-pink" />
                 </div>
-                <h3 className="text-sm font-semibold text-brand-ink mb-0.5">{t('dashboard.action.pregnancy.title')}</h3>
-                <p className="text-xs text-brand-inkSoft leading-tight">
+                <h3 className="text-sm font-bold text-brand-ink leading-tight">{t('dashboard.action.pregnancy.title')}</h3>
+                <p className="text-[11px] text-brand-pink font-semibold mt-0.5">
                   {(() => {
                     const pregnantMember = familyMembers.find(m => m.isPregnant)
-                    if (pregnantMember && pregnantMember.lmpDate) {
+                    if (pregnantMember?.lmpDate) {
                       const week = calculatePregnancyWeek(pregnantMember.lmpDate)
-                      return t('dashboard.action.pregnancy.subtitle', { week, left: Math.max(0, 40 - week) })
+                      return `Week ${week} of 40`
                     }
-                    return 'Not setup'
+                    return 'Track pregnancy'
                   })()}
                 </p>
               </Link>
             )}
 
             {profile.features.vaccination && (
-              <Link href="/vaccination" className="bg-white border border-brand-border rounded-2xl p-4 md:p-5 shadow-card hover:shadow-card-md transition-shadow relative">
-                <div className="w-10 h-10 rounded-xl bg-brand-saffronLight flex items-center justify-center mb-2">
+              <Link href="/vaccination" className="bg-brand-saffronLight border border-brand-saffron/15 rounded-2xl p-4 active:scale-[0.97] transition-all relative">
+                <div className="w-10 h-10 rounded-xl bg-brand-saffron/15 flex items-center justify-center mb-3">
                   <Syringe size={20} className="text-brand-saffron" />
                 </div>
-                <h3 className="text-sm font-semibold text-brand-ink mb-0.5">{t('dashboard.action.vaccination.title')}</h3>
-                <p className="text-xs text-brand-inkSoft leading-tight">{t('dashboard.action.vaccination.subtitle', { done: 3, total: 14 })}</p>
+                <h3 className="text-sm font-bold text-brand-ink leading-tight">{t('dashboard.action.vaccination.title')}</h3>
+                <p className="text-[11px] text-brand-saffron font-semibold mt-0.5">
+                  {t('dashboard.action.vaccination.subtitle', { done: 3, total: 14 })}
+                </p>
                 {reminders.some(r => r.type === 'vaccine' && r.urgency === 'urgent') && (
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-brand-saffron rounded-full text-white text-[10px] flex items-center justify-center font-bold">!</div>
+                  <span className="absolute top-2 right-2 w-5 h-5 bg-brand-danger rounded-full text-white text-[9px] flex items-center justify-center font-black">!</span>
                 )}
               </Link>
             )}
 
             {profile.features.awareness && (
-              <Link href="/awareness" className="bg-white border border-brand-border rounded-2xl p-4 md:p-5 shadow-card hover:shadow-card-md transition-shadow relative">
-                <div className="w-10 h-10 rounded-xl bg-brand-lightGreen flex items-center justify-center mb-2">
+              <Link href="/awareness" className="bg-brand-lightGreen border border-brand-deepGreen/10 rounded-2xl p-4 active:scale-[0.97] transition-all">
+                <div className="w-10 h-10 rounded-xl bg-brand-deepGreen/10 flex items-center justify-center mb-3">
                   <BookOpen size={20} className="text-brand-deepGreen" />
                 </div>
-                <h3 className="text-sm font-semibold text-brand-ink mb-0.5">{t('dashboard.action.awareness.title')}</h3>
-                <p className="text-xs text-brand-inkSoft leading-tight">{t('dashboard.action.awareness.subtitle', { count: AWARENESS_ARTICLES.length })}</p>
-              </Link>
-            )}
-
-            {activeFeatures.length < 2 && (
-              <Link href="/settings" className="bg-white border border-brand-border border-dashed rounded-2xl p-4 md:p-5 shadow-sm hover:shadow-card-md transition-shadow flex flex-col justify-center items-center text-center">
-                <div className="w-10 h-10 rounded-xl bg-brand-smoke flex items-center justify-center mb-2">
-                  <Settings size={20} className="text-brand-inkSoft" />
-                </div>
-                <h3 className="text-sm font-semibold text-brand-ink mb-0.5">{t('dashboard.action.settings.title')}</h3>
-                <p className="text-xs text-brand-inkSoft leading-tight">{t('dashboard.action.settings.subtitle')}</p>
+                <h3 className="text-sm font-bold text-brand-ink leading-tight">{t('dashboard.action.awareness.title')}</h3>
+                <p className="text-[11px] text-brand-deepGreen font-semibold mt-0.5">
+                  {t('dashboard.action.awareness.subtitle', { count: AWARENESS_ARTICLES.length })}
+                </p>
               </Link>
             )}
           </div>
         </section>
 
-        {/* Reminders & Health Tip - Side by side on desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Reminders Section - 2 cols on desktop */}
-          <section className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-3 md:mb-4">
-              <h2 className="text-base md:text-lg font-semibold text-brand-ink">{t('dashboard.remindersTitle')}</h2>
-              {reminders.length > 0 && (
-                <Badge variant="secondary" className="bg-brand-saffronLight text-brand-saffron border-none px-1.5 min-w-[20px] justify-center">{reminders.length}</Badge>
+        {/* ── Family Members ── */}
+        {familyMembers.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <p className="section-label">{t('dashboard.familyTitle')}</p>
+              <Link href="/settings" className="text-xs font-bold text-brand-deepGreen">{t('dashboard.seeAllFamily')} →</Link>
+            </div>
+
+            <div className="flex overflow-x-auto gap-3 -mx-4 px-4 pb-1 scrollbar-hide">
+              {familyMembers.map(member => {
+                const status = getFamilyStatus(member)
+                const initials = member.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
+                const relationColors: Record<string, string> = {
+                  self: 'bg-brand-lightGreen text-brand-deepGreen',
+                  spouse: 'bg-brand-blueLight text-brand-blue',
+                  child: 'bg-brand-saffronLight text-brand-saffron',
+                  parent: 'bg-brand-pinkLight text-brand-pink',
+                  other: 'bg-brand-smoke text-brand-inkSoft',
+                }
+                const avatarColor = relationColors[member.relation as string] ?? relationColors.other
+
+                return (
+                  <div key={member.id} className="bg-white border border-brand-border rounded-2xl p-3.5 flex-shrink-0 w-[120px] shadow-card flex flex-col items-center text-center gap-2">
+                    <div className={`w-11 h-11 rounded-full font-bold text-sm flex items-center justify-center ${avatarColor}`}>
+                      {initials}
+                    </div>
+                    <div className="w-full">
+                      <p className="text-xs font-bold text-brand-ink truncate">{member.name.split(' ')[0]}</p>
+                      <p className="text-[10px] text-brand-inkSoft capitalize">{member.relation}</p>
+                    </div>
+                    {status && (
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${status.bg} ${status.text}`}>
+                        {status.label}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+
+              <Link href="/settings" className="bg-brand-smoke border border-dashed border-brand-border rounded-2xl p-3.5 flex-shrink-0 w-[120px] flex flex-col items-center justify-center gap-2 active:bg-brand-border/30 transition-colors">
+                <div className="w-11 h-11 rounded-full bg-white border border-brand-border flex items-center justify-center text-brand-inkSoft">
+                  <Plus size={18} />
+                </div>
+                <p className="text-xs font-semibold text-brand-inkSoft">Add Member</p>
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {/* ── Reminders ── */}
+        <section>
+          <div className="flex items-center gap-2 mb-3">
+            <p className="section-label">{t('dashboard.remindersTitle')}</p>
+            {reminders.length > 0 && (
+              <span className="w-5 h-5 bg-brand-saffron text-white rounded-full text-[10px] font-black flex items-center justify-center">
+                {reminders.length}
+              </span>
+            )}
+          </div>
+
+          {reminders.length > 0 ? (
+            <div className="flex flex-col gap-2.5">
+              {reminders.slice(0, 3).map(rem => (
+                <ReminderCard key={rem.id} reminder={rem} language={language} />
+              ))}
+              {reminders.length > 3 && (
+                <Link href="/settings" className="text-sm font-semibold text-brand-deepGreen text-center py-2">
+                  {t('dashboard.seeAllReminders', { n: reminders.length - 3 })} →
+                </Link>
               )}
             </div>
-            
-            {reminders.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {reminders.slice(0, 3).map(rem => (
-                  <ReminderCard key={rem.id} reminder={rem} language={language} />
-                ))}
-                {reminders.length > 3 && (
-                  <Link href="/settings" className="text-sm font-medium text-brand-deepGreen text-center py-2 hover:bg-brand-smoke rounded-lg transition-colors">
-                    {t('dashboard.seeAllReminders', { n: reminders.length - 3 })} →
-                  </Link>
-                )}
+          ) : (
+            <div className="bg-white border border-brand-border rounded-2xl p-5 flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-brand-lightGreen flex items-center justify-center shrink-0">
+                <CheckCircle size={20} className="text-brand-deepGreen" />
               </div>
-            ) : (
-              <EmptyState 
-                icon={CheckCircle} 
-                title={t('dashboard.remindersEmpty')} 
-                description={t('dashboard.remindersEmptyDesc')} 
-                tone="default"
-              />
-            )}
-          </section>
+              <div>
+                <p className="text-sm font-bold text-brand-ink">{t('dashboard.remindersEmpty')}</p>
+                <p className="text-xs text-brand-inkSoft font-medium">{t('dashboard.remindersEmptyDesc')}</p>
+              </div>
+            </div>
+          )}
+        </section>
 
-          {/* Health Tip Card */}
-          {profile.features.awareness && (
-            <section className="lg:col-span-1">
-              <h2 className="text-base md:text-lg font-semibold text-brand-ink mb-3 md:mb-4">{t('dashboard.tipTitle')}</h2>
-              <Link href="/awareness" className="bg-white border border-brand-border rounded-2xl p-4 md:p-5 shadow-card hover:shadow-card-md transition-shadow flex flex-col h-full">
-                <div className="w-12 h-12 shrink-0 rounded-full bg-brand-lightGreen flex items-center justify-center mb-3">
-                  <BookOpen size={24} className="text-brand-deepGreen" />
-                </div>
-                <Badge className="bg-brand-pinkLight text-brand-pink border-none mb-2 w-fit hover:bg-brand-pinkLight">
+        {/* ── Health Tip ── */}
+        {profile.features.awareness && (
+          <section>
+            <p className="section-label mb-3">{t('dashboard.tipTitle')}</p>
+            <Link href="/awareness" className="flex gap-4 bg-white border border-brand-border rounded-2xl p-4 shadow-card active:scale-[0.98] transition-all items-start">
+              <div className="w-12 h-12 shrink-0 rounded-xl bg-brand-lightGreen flex items-center justify-center">
+                <BookOpen size={22} className="text-brand-deepGreen" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-[11px] font-bold text-brand-pink uppercase tracking-wide">
                   {tip.category.charAt(0).toUpperCase() + tip.category.slice(1)}
-                </Badge>
-                <h3 className="font-semibold text-brand-ink text-sm mb-2 flex-grow">
+                </span>
+                <h3 className="text-sm font-bold text-brand-ink mt-0.5 leading-snug">
                   {language === 'hi' ? tip.title.hi : tip.title.en}
                 </h3>
-                <span className="text-brand-deepGreen font-medium text-xs">
-                  {tip.readTimeMinutes} min padhein →
-                </span>
-              </Link>
-            </section>
-          )}
-        </div>
-
-        {/* Family Row - Horizontal scroll on mobile, grid on desktop */}
-        <section>
-          <div className="flex items-center justify-between mb-3 md:mb-4">
-            <h2 className="text-base md:text-lg font-semibold text-brand-ink">{t('dashboard.familyTitle')}</h2>
-            <Link href="/settings" className="text-xs md:text-sm font-medium text-brand-deepGreen hover:underline">{t('dashboard.seeAllFamily')} →</Link>
-          </div>
-          
-          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {familyMembers.map(member => {
-              const status = getFamilyStatus(member)
-              const initials = member.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()
-              return (
-                <div key={member.id} className="bg-white border border-brand-border rounded-2xl p-4 shadow-sm flex flex-col items-center text-center hover:shadow-card-md transition-shadow">
-                  <div className="w-12 h-12 rounded-full bg-brand-lightGreen text-brand-deepGreen font-bold flex items-center justify-center mb-2">
-                    {initials}
-                  </div>
-                  <div className="w-full">
-                    <h4 className="text-sm font-semibold text-brand-ink truncate">{member.name}</h4>
-                    <p className="text-xs text-brand-inkSoft mb-2 capitalize">{member.relation}</p>
-                    {status ? (
-                      <div className={`${status.bg} ${status.text} text-xs font-semibold px-2 py-1 rounded-full inline-block`}>
-                        {status.label}
-                      </div>
-                    ) : (
-                      <div className="h-6" />
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-            
-            <Link href="/settings" className="bg-brand-smoke border border-brand-border border-dashed rounded-2xl p-4 flex flex-col items-center justify-center text-center hover:bg-brand-border/20 transition-colors">
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-2 text-brand-inkSoft">
-                <Plus size={20} />
+                <p className="text-xs text-brand-deepGreen font-semibold mt-1.5">
+                  {tip.readTimeMinutes} min read →
+                </p>
               </div>
-              <span className="text-sm font-medium text-brand-inkSoft">Add Member</span>
             </Link>
-          </div>
-
-          {/* Mobile horizontal scroll */}
-          <div className="flex md:hidden overflow-x-auto gap-3 pb-2 -mx-4 px-4 scrollbar-hide">
-            {familyMembers.map(member => {
-              const status = getFamilyStatus(member)
-              const initials = member.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()
-              return (
-                <div key={member.id} className="bg-white border border-brand-border rounded-2xl p-3 flex-shrink-0 w-28 shadow-sm flex flex-col items-center text-center">
-                  <div className="w-12 h-12 rounded-full bg-brand-lightGreen text-brand-deepGreen font-bold flex items-center justify-center mb-2">
-                    {initials}
-                  </div>
-                  <div className="w-full">
-                    <h4 className="text-xs font-semibold text-brand-ink truncate">{member.name.split(' ')[0]}</h4>
-                    <p className="text-[10px] text-brand-inkSoft mb-1.5 capitalize">{member.relation}</p>
-                    {status ? (
-                      <div className={`${status.bg} ${status.text} text-[9px] font-semibold px-2 py-0.5 rounded-full inline-block`}>
-                        {status.label}
-                      </div>
-                    ) : (
-                      <div className="h-4" />
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-            
-            <Link href="/settings" className="bg-brand-smoke border border-brand-border border-dashed rounded-2xl p-3 flex-shrink-0 w-28 flex flex-col items-center justify-center text-center active:bg-brand-border/50 transition-colors">
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center mb-2 text-brand-inkSoft">
-                <Plus size={20} />
-              </div>
-              <span className="text-xs font-medium text-brand-inkSoft">Add Member</span>
-            </Link>
-          </div>
-        </section>
+          </section>
+        )}
 
       </div>
     </AppShell>

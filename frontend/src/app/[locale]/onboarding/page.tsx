@@ -125,22 +125,37 @@ export default function OnboardingPage() {
         <h1 className="text-2xl font-bold text-brand-ink mb-1">{t('onboarding.step2.title')}</h1>
         <p className="text-sm text-brand-inkSoft">{t('onboarding.step2.subtitle')}</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-2.5">
         {[
-          { id: 'prescription', icon: Pill, bg: 'bg-brand-lightGreen', title: t('features.prescription'), desc: t('onboarding.features.prescription.desc') },
-          { id: 'schemes', icon: Building2, bg: 'bg-brand-blueLight', title: t('features.schemes'), desc: t('onboarding.features.schemes.desc') },
-          { id: 'pregnancy', icon: HeartPulse, bg: 'bg-brand-pinkLight', title: t('features.pregnancy'), desc: t('onboarding.features.pregnancy.desc') },
-          { id: 'vaccination', icon: Syringe, bg: 'bg-brand-saffronLight', title: t('features.vaccination'), desc: t('onboarding.features.vaccination.desc') },
-          { id: 'awareness', icon: BookOpen, bg: 'bg-brand-lightGreen', title: t('features.awareness'), desc: t('onboarding.features.awareness.desc') },
+          { id: 'prescription', icon: Pill,       accent: 'text-brand-deepGreen bg-brand-lightGreen',   title: t('features.prescription'), desc: t('onboarding.features.prescription.desc') },
+          { id: 'schemes',      icon: Building2,  accent: 'text-brand-blue bg-brand-blueLight',          title: t('features.schemes'),      desc: t('onboarding.features.schemes.desc') },
+          { id: 'pregnancy',    icon: HeartPulse, accent: 'text-brand-pink bg-brand-pinkLight',          title: t('features.pregnancy'),    desc: t('onboarding.features.pregnancy.desc') },
+          { id: 'vaccination',  icon: Syringe,    accent: 'text-brand-saffron bg-brand-saffronLight',    title: t('features.vaccination'),  desc: t('onboarding.features.vaccination.desc') },
+          { id: 'awareness',    icon: BookOpen,   accent: 'text-brand-deepGreen bg-brand-lightGreen',    title: t('features.awareness'),    desc: t('onboarding.features.awareness.desc') },
         ].map(feat => {
           const isSelected = selectedFeatures[feat.id as keyof typeof selectedFeatures]
           return (
-            <div key={feat.id} onClick={() => handleFeatureToggle(feat.id as any)} className={`relative bg-white border-2 rounded-2xl p-4 transition-colors cursor-pointer select-none ${isSelected ? 'border-brand-deepGreen bg-brand-lightGreen/20 shadow-sm' : 'border-brand-border shadow-card'}`}>
-              <div className="flex justify-between items-start mb-3">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${feat.bg} text-brand-ink`}><feat.icon size={20} /></div>
-                <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${isSelected ? 'bg-brand-deepGreen border-brand-deepGreen text-white' : 'border-brand-border bg-white'}`}>{isSelected && <CheckCircle size={14} strokeWidth={3} />}</div>
+            <div
+              key={feat.id}
+              onClick={() => handleFeatureToggle(feat.id as any)}
+              className={`flex items-center gap-4 p-4 rounded-2xl border-2 cursor-pointer select-none transition-all active:scale-[0.98] ${
+                isSelected
+                  ? 'border-brand-deepGreen bg-brand-lightGreen/30'
+                  : 'border-brand-border bg-white'
+              }`}
+            >
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${feat.accent}`}>
+                <feat.icon size={20} />
               </div>
-              <h3 className="font-semibold text-brand-ink text-sm mb-1">{feat.title}</h3><p className="text-xs text-brand-inkSoft leading-tight">{feat.desc}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-brand-ink">{feat.title}</p>
+                <p className="text-xs text-brand-inkSoft leading-tight mt-0.5">{feat.desc}</p>
+              </div>
+              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                isSelected ? 'bg-brand-deepGreen border-brand-deepGreen text-white' : 'border-brand-border bg-white'
+              }`}>
+                {isSelected && <CheckCircle size={14} strokeWidth={3} />}
+              </div>
             </div>
           )
         })}

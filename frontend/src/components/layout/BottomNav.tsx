@@ -48,15 +48,17 @@ export function BottomNav() {
                 <button
                   key="more"
                   onClick={() => setMoreOpen(true)}
-                  className={`flex-1 flex flex-col items-center justify-center gap-0.5 relative
-                    transition-colors ${isActive ? 'text-brand-deepGreen' : 'text-brand-inkSoft'}`}
+                  className={`flex-1 flex flex-col items-center justify-center gap-1 relative
+                    transition-colors min-h-[44px] ${isActive ? 'text-brand-deepGreen' : 'text-brand-inkSoft/70'}`}
                   aria-label="More options"
                 >
                   {isActive && (
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-brand-deepGreen" />
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[3px] rounded-full bg-brand-deepGreen" />
                   )}
-                  <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
-                  <span className="text-[10px] font-medium">{t(tab.labelKey)}</span>
+                  <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-brand-lightGreen' : ''}`}>
+                    <Icon size={20} strokeWidth={isActive ? 2.5 : 1.75} />
+                  </div>
+                  <span className="text-[11px] font-semibold leading-none">{t(tab.labelKey)}</span>
                 </button>
               )
             }
@@ -66,14 +68,16 @@ export function BottomNav() {
                 key={tab.href}
                 href={tab.href}
                 aria-current={isActive ? 'page' : undefined}
-                className={`flex-1 flex flex-col items-center justify-center gap-0.5 relative
-                  transition-colors ${isActive ? 'text-brand-deepGreen' : 'text-brand-inkSoft'}`}
+                className={`flex-1 flex flex-col items-center justify-center gap-1 relative
+                  transition-colors min-h-[44px] ${isActive ? 'text-brand-deepGreen' : 'text-brand-inkSoft/70'}`}
               >
                 {isActive && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-brand-deepGreen" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-[3px] rounded-full bg-brand-deepGreen" />
                 )}
-                <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
-                <span className="text-[10px] font-medium">{t(tab.labelKey)}</span>
+                <div className={`p-1.5 rounded-xl transition-colors ${isActive ? 'bg-brand-lightGreen' : ''}`}>
+                  <Icon size={20} strokeWidth={isActive ? 2.5 : 1.75} />
+                </div>
+                <span className="text-[11px] font-semibold leading-none">{t(tab.labelKey)}</span>
               </Link>
             )
           })}

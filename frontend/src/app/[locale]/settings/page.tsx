@@ -167,27 +167,38 @@ export default function SettingsPage() {
       
       <div className="p-4 flex flex-col gap-6 pb-12">
         <section>
-          <div className="bg-white border border-brand-border rounded-2xl p-4 shadow-sm flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-brand-lightGreen text-brand-deepGreen font-bold text-lg flex items-center justify-center">
-                  {profile.name.substring(0, 2).toUpperCase()}
+          <div className="bg-gradient-to-br from-brand-deepGreen to-brand-midGreen rounded-2xl p-5 shadow-card-md relative overflow-hidden">
+            <div className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-white/5 pointer-events-none" />
+            <div className="relative z-10">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-white/20 text-white font-bold text-lg flex items-center justify-center">
+                    {profile.name.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-white text-base leading-tight">{profile.name}</h3>
+                    <p className="text-white/60 text-xs font-medium">{profile.city}, {profile.state}</p>
+                  </div>
                 </div>
+                <Button variant="ghost" size="sm" onClick={() => setEditProfileOpen(true)} className="text-white/80 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-lg">
+                  <Edit3 size={15} />
+                </Button>
+              </div>
+              <div className="flex items-center gap-4">
                 <div>
-                  <h3 className="font-semibold text-brand-ink text-base">{profile.name}</h3>
-                  <p className="text-xs text-brand-inkSoft">{profile.city}, {profile.state}</p>
+                  <p className="text-white/50 text-[10px] font-semibold uppercase tracking-wide">Age</p>
+                  <p className="text-white font-bold text-sm">{profile.age} yrs</p>
                 </div>
-              </div>
-              <Button variant="ghost" size="sm" onClick={() => setEditProfileOpen(true)} className="text-brand-deepGreen"><Edit3 size={16} /></Button>
-            </div>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <div className="bg-brand-smoke rounded-xl p-3">
-                <p className="text-[10px] text-brand-inkSoft font-medium uppercase tracking-wider mb-1">Age & Language</p>
-                <p className="text-sm font-semibold text-brand-ink">{profile.age} yrs • {profile.language === 'hi' ? 'Hindi' : 'English'}</p>
-              </div>
-              <div className="bg-brand-smoke rounded-xl p-3">
-                <p className="text-[10px] text-brand-inkSoft font-medium uppercase tracking-wider mb-1">Impact</p>
-                <p className="text-sm font-semibold text-brand-deepGreen">₹{wallet.totalSavings} saved</p>
+                <div className="w-px h-8 bg-white/20" />
+                <div>
+                  <p className="text-white/50 text-[10px] font-semibold uppercase tracking-wide">Language</p>
+                  <p className="text-white font-bold text-sm">{profile.language === 'hi' ? 'Hindi' : 'English'}</p>
+                </div>
+                <div className="w-px h-8 bg-white/20" />
+                <div>
+                  <p className="text-white/50 text-[10px] font-semibold uppercase tracking-wide">Total Saved</p>
+                  <p className="text-white font-mono font-bold text-sm">₹{wallet.totalSavings}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -195,8 +206,8 @@ export default function SettingsPage() {
 
         <section>
           <div className="mb-3">
-            <h3 className="font-semibold text-sm text-brand-ink uppercase tracking-wider">{t('settings.featuresTitle')}</h3>
-            <p className="text-xs text-brand-inkSoft">{t('settings.featuresSubtitle')}</p>
+            <p className="section-label">{t('settings.featuresTitle')}</p>
+            <p className="text-xs text-brand-inkSoft mt-0.5">{t('settings.featuresSubtitle')}</p>
           </div>
           <div className="flex flex-col gap-3">
             <FeatureToggleRow featureKey="prescription" icon={Pill} title={t('features.prescription')} description={t('onboarding.features.prescription.desc')} tone="green" />
@@ -210,7 +221,7 @@ export default function SettingsPage() {
 
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-sm text-brand-ink uppercase tracking-wider">{t('settings.familyTitle')}</h3>
+            <p className="section-label">{t('settings.familyTitle')}</p>
             <Button variant="ghost" size="sm" onClick={openAddMember} className="text-brand-deepGreen h-8 px-2 text-xs">
               <Plus size={14} className="mr-1" /> {t('settings.addMember')}
             </Button>
@@ -244,12 +255,12 @@ export default function SettingsPage() {
         </section>
 
         <section>
-          <h3 className="font-semibold text-sm text-brand-ink uppercase tracking-wider mb-3">{t('settings.languageTitle')}</h3>
+          <p className="section-label mb-3">{t('settings.languageTitle')}</p>
           <LanguageToggle />
         </section>
 
         <section>
-          <h3 className="font-semibold text-sm text-brand-ink uppercase tracking-wider mb-3">{t('settings.appTitle')}</h3>
+          <p className="section-label mb-3">{t('settings.appTitle')}</p>
           <div className="bg-white border border-brand-border rounded-2xl shadow-sm overflow-hidden flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-brand-border">
               <div className="flex items-center gap-3 text-brand-ink"><Bell size={20} className="text-brand-inkSoft" /><span className="text-sm font-medium">{t('settings.notifications')}</span></div>

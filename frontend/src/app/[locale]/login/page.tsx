@@ -3,9 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import Image from 'next/image'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, AlertCircle, Mail, Lock, Sparkles, ArrowRight, KeyRound, ShieldCheck } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ChevronLeft, AlertCircle, Lock, Sparkles, KeyRound, ShieldCheck, HeartPulse } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -156,224 +155,208 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* LEFT SIDE: Visual & Trust Indicators (Hidden on small mobile) */}
-      <div className="hidden md:flex md:w-1/2 lg:w-[55%] bg-brand-lightGreen p-12 flex-col justify-center items-center relative">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white/60 via-transparent to-transparent pointer-events-none" />
-        
-        <div className="max-w-md w-full relative z-10 flex flex-col items-center text-center">
-          <div className="w-64 h-64 relative mb-10">
-            <Image 
-              src="/images/auth_trust.png" 
-              alt="Secure Health Platform" 
-              fill 
-              className="object-contain drop-shadow-xl"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              priority
-            />
+      {/* LEFT SIDE: Brand story (Hidden on small mobile) */}
+      <div className="hidden md:flex md:w-1/2 lg:w-[55%] bg-gradient-to-br from-brand-deepGreen to-brand-midGreen p-12 flex-col justify-center items-start relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-white/5 -translate-y-1/3 translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-black/10 translate-y-1/3 -translate-x-1/3 pointer-events-none" />
+
+        <div className="relative z-10 max-w-md">
+          <div className="w-16 h-16 rounded-2xl bg-white/15 flex items-center justify-center mb-8">
+            <HeartPulse size={32} className="text-white" />
           </div>
-          <h2 className="text-3xl lg:text-4xl font-black text-brand-ink mb-6">Your Family&apos;s Digital Health Companion</h2>
-          <div className="flex flex-col gap-4 text-left w-full">
-            <div className="flex items-center gap-4 bg-white/60 p-4 rounded-2xl backdrop-blur-sm border border-white">
-              <div className="w-10 h-10 rounded-full bg-brand-deepGreen text-white flex items-center justify-center shrink-0">
-                <ShieldCheck size={20} />
+          <h2 className="text-3xl lg:text-4xl font-black text-white mb-4 leading-tight">
+            Apne parivaar ki<br />sehat, ek jagah
+          </h2>
+          <p className="text-white/70 text-base font-medium mb-10 leading-relaxed">
+            Prescriptions scan karo, sarkari yojanaon ke liye check karo, aur poori family ka health track karo — bilkul free.
+          </p>
+
+          <div className="flex flex-col gap-3">
+            {[
+              { icon: ShieldCheck, title: 'Private & Secure', desc: 'Your data stays yours. Always.' },
+              { icon: Lock, title: 'Government-Backed Info', desc: 'Schemes and data from official sources.' },
+              { icon: Sparkles, title: '100% Free Forever', desc: 'No subscriptions, no hidden charges.' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 bg-white/10 p-3.5 rounded-2xl">
+                <div className="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                  <item.icon size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-white text-sm font-bold">{item.title}</p>
+                  <p className="text-white/60 text-xs font-medium">{item.desc}</p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-brand-ink text-sm">100% Secure & Private</h4>
-                <p className="text-xs font-medium text-brand-inkSoft">Your health records are end-to-end encrypted.</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 bg-white/60 p-4 rounded-2xl backdrop-blur-sm border border-white">
-              <div className="w-10 h-10 rounded-full bg-brand-deepGreen text-white flex items-center justify-center shrink-0">
-                <Lock size={20} />
-              </div>
-              <div>
-                <h4 className="font-bold text-brand-ink text-sm">Verified Medical Info</h4>
-                <p className="text-xs font-medium text-brand-inkSoft">Information curated from authentic government sources.</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* RIGHT SIDE: Auth Form */}
       <div className="w-full md:w-1/2 lg:w-[45%] flex items-center justify-center p-6 pt-28 pb-10 relative">
-        <div className="absolute -top-32 -right-32 w-96 h-96 bg-brand-saffron/10 blur-[100px] rounded-full pointer-events-none" />
-        
-        <motion.div 
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-brand-saffron/8 blur-[120px] rounded-full pointer-events-none" />
+
+        <motion.div
           key={mode}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="w-full max-w-[400px] bg-white/80 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] shadow-glass p-8 relative z-10"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          className="w-full max-w-[400px] bg-white border border-brand-border rounded-3xl shadow-card-md p-8 relative z-10"
         >
-          <div className="text-center mb-8 flex flex-col items-center">
-            <div className="mb-6"><Logo variant="app" /></div>
-            <h1 className="text-2xl font-black text-brand-ink mb-2 tracking-tight">
-              {mode === 'forgot_password' ? 'Reset Password' : 'Login'}
+          <div className="mb-7 flex flex-col items-start">
+            <div className="mb-5"><Logo variant="app" /></div>
+            <h1 className="text-2xl font-black text-brand-ink tracking-tight">
+              {mode === 'forgot_password' ? 'Reset Password' : mode === 'otp_verify' ? 'Enter OTP' : 'Sign In'}
             </h1>
-            <p className="text-sm text-brand-inkSoft font-medium">
-              {mode === 'forgot_password' ? 'Enter email to receive reset link' : 'Welcome back to SehatMitra'}
+            <p className="text-sm text-brand-inkSoft font-medium mt-1">
+              {mode === 'forgot_password'
+                ? "We'll send a reset link to your email"
+                : mode === 'otp_verify'
+                ? `Code sent to ${email}`
+                : 'Good to see you again'}
             </p>
           </div>
 
           {error && (
-            <Alert variant="destructive" className="mb-6 bg-brand-dangerLight border-brand-danger/20 text-brand-danger rounded-2xl">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription className="text-xs font-bold">{error}</AlertDescription>
-            </Alert>
+            <div className="mb-5 flex items-start gap-3 p-3.5 bg-brand-dangerLight border border-brand-danger/20 rounded-2xl">
+              <AlertCircle size={16} className="text-brand-danger mt-0.5 shrink-0" />
+              <p className="text-xs font-semibold text-brand-danger">{error}</p>
+            </div>
           )}
 
           {success && (
-            <Alert className="mb-6 bg-brand-lightGreen border-brand-deepGreen/20 text-brand-deepGreen rounded-2xl">
-              <Sparkles className="h-4 w-4" />
-              <AlertDescription className="text-xs font-bold">{success}</AlertDescription>
-            </Alert>
+            <div className="mb-5 flex items-start gap-3 p-3.5 bg-brand-lightGreen border border-brand-deepGreen/20 rounded-2xl">
+              <Sparkles size={16} className="text-brand-deepGreen mt-0.5 shrink-0" />
+              <p className="text-xs font-semibold text-brand-deepGreen">{success}</p>
+            </div>
           )}
 
           {/* PASSWORD LOGIN */}
           {mode === 'password' && (
-            <form onSubmit={handlePasswordLogin} className="flex flex-col gap-5">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-brand-ink flex items-center gap-2">
-                  <Mail size={16} className="text-brand-deepGreen" />
-                  Email Address
-                </label>
-                <Input 
-                  type="email" 
-                  value={email} 
-                  onChange={e => setEmail(e.target.value)} 
-                  placeholder="your@email.com" 
-                  className="h-14 rounded-xl text-lg w-full bg-white/50" 
+            <form onSubmit={handlePasswordLogin} className="flex flex-col gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-brand-inkSoft uppercase tracking-wide">Email</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="h-12 rounded-xl w-full"
                   required
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <label className="text-sm font-bold text-brand-ink flex items-center gap-2">
-                    <Lock size={16} className="text-brand-deepGreen" />
-                    Password
-                  </label>
-                  <button type="button" onClick={() => setMode('forgot_password')} className="text-xs font-bold text-brand-deepGreen hover:underline">
-                    Forgot Password?
+                  <label className="text-xs font-bold text-brand-inkSoft uppercase tracking-wide">Password</label>
+                  <button type="button" onClick={() => setMode('forgot_password')} className="text-xs font-bold text-brand-deepGreen">
+                    Forgot?
                   </button>
                 </div>
-                <Input 
-                  type="password" 
-                  value={password} 
-                  onChange={e => setPassword(e.target.value)} 
-                  placeholder="Enter password" 
-                  className="h-14 rounded-xl text-lg w-full bg-white/50" 
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="h-12 rounded-xl w-full"
                   required
                 />
               </div>
-              <Button type="submit" disabled={isLoading} className="w-full h-14 bg-gradient-premium text-white rounded-xl text-base font-bold shadow-button">
-                {isLoading ? 'Loading...' : 'Log In'}
+              <Button type="submit" disabled={isLoading} className="w-full h-12 bg-gradient-premium text-white rounded-xl font-bold shadow-button mt-1">
+                {isLoading ? 'Signing in...' : 'Sign In'}
               </Button>
-              
-              <div className="relative flex items-center py-2">
-                <div className="flex-grow border-t border-brand-border/60"></div>
-                <span className="flex-shrink-0 mx-4 text-[10px] uppercase font-black tracking-wider text-brand-inkSoft">Or continue with</span>
-                <div className="flex-grow border-t border-brand-border/60"></div>
+
+              <div className="relative flex items-center">
+                <div className="flex-grow border-t border-brand-border" />
+                <span className="mx-3 text-[10px] uppercase font-bold tracking-widest text-brand-inkSoft/60">or</span>
+                <div className="flex-grow border-t border-brand-border" />
               </div>
-              
+
               {!isSupabaseConfigured && (
-                <Button type="button" onClick={() => router.push('/dashboard')} variant="outline" className="w-full h-14 rounded-xl border-2 border-brand-deepGreen text-brand-deepGreen font-bold hover:bg-brand-smoke bg-brand-lightGreen mb-2">
-                  <Sparkles className="mr-2 text-brand-deepGreen" size={18} /> Continue in Demo Mode
+                <Button type="button" onClick={() => router.push('/dashboard')} variant="outline" className="w-full h-12 rounded-xl border-2 border-brand-deepGreen/30 text-brand-deepGreen font-bold bg-brand-lightGreen hover:bg-brand-lightGreen/80">
+                  <Sparkles className="mr-2" size={16} /> Continue in Demo Mode
                 </Button>
               )}
-              
-              <Button type="button" onClick={() => setMode('otp_request')} variant="outline" className="w-full h-14 rounded-xl border-2 border-brand-border text-brand-ink font-bold hover:bg-brand-smoke bg-white">
-                <KeyRound className="mr-2 text-brand-deepGreen" size={18} /> Login with OTP
+              <Button type="button" onClick={() => setMode('otp_request')} variant="outline" className="w-full h-12 rounded-xl border-2 border-brand-border text-brand-ink font-bold">
+                <KeyRound className="mr-2 text-brand-deepGreen" size={16} /> Sign in with OTP
               </Button>
             </form>
           )}
 
           {/* OTP REQUEST */}
           {mode === 'otp_request' && (
-            <form onSubmit={handleSendOtp} className="flex flex-col gap-5">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-brand-ink flex items-center gap-2">
-                  <Mail size={16} className="text-brand-deepGreen" />
-                  Email Address
-                </label>
-                <Input 
-                  type="email" 
-                  value={email} 
-                  onChange={e => setEmail(e.target.value)} 
-                  placeholder="your@email.com" 
-                  className="h-14 rounded-xl text-lg w-full bg-white/50" 
+            <form onSubmit={handleSendOtp} className="flex flex-col gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-brand-inkSoft uppercase tracking-wide">Email</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="h-12 rounded-xl w-full"
                   required
                 />
               </div>
-              <Button type="submit" disabled={isLoading} className="w-full h-14 bg-gradient-premium text-white rounded-xl text-base font-bold shadow-button">
-                {isLoading ? 'Sending...' : 'Send OTP'}
+              <Button type="submit" disabled={isLoading} className="w-full h-12 bg-gradient-premium text-white rounded-xl font-bold shadow-button">
+                {isLoading ? 'Sending...' : 'Send One-Time Code'}
               </Button>
-              <button type="button" onClick={() => setMode('password')} className="text-xs font-bold text-brand-inkSoft mt-2 hover:text-brand-deepGreen transition-colors">
-                Use Password Instead
+              <button type="button" onClick={() => setMode('password')} className="text-sm font-bold text-brand-inkSoft hover:text-brand-deepGreen transition-colors text-center">
+                ← Use password instead
               </button>
             </form>
           )}
 
           {/* OTP VERIFY */}
           {mode === 'otp_verify' && (
-            <form onSubmit={handleVerifyOtp} className="flex flex-col gap-5">
-              <div className="space-y-2 text-center">
-                <label className="text-sm font-bold text-brand-ink">
-                  Enter OTP sent to {email}
-                </label>
-                <Input 
-                  type="text" 
-                  value={otp} 
-                  onChange={e => setOtp(e.target.value)} 
-                  placeholder="000000" 
-                  maxLength={6}
-                  className="h-14 rounded-xl text-2xl tracking-widest text-center w-full bg-white/50" 
-                  required
-                />
-              </div>
-              <Button type="submit" disabled={isLoading || otp.length < 6} className="w-full h-14 bg-gradient-premium text-white rounded-xl text-base font-bold shadow-button">
-                {isLoading ? 'Verifying...' : 'Verify OTP'}
+            <form onSubmit={handleVerifyOtp} className="flex flex-col gap-4">
+              <Input
+                type="text"
+                value={otp}
+                onChange={e => setOtp(e.target.value)}
+                placeholder="000000"
+                maxLength={6}
+                className="h-16 rounded-xl text-3xl tracking-[0.5em] text-center w-full font-mono font-bold"
+                required
+              />
+              <Button type="submit" disabled={isLoading || otp.length < 6} className="w-full h-12 bg-gradient-premium text-white rounded-xl font-bold shadow-button">
+                {isLoading ? 'Verifying...' : 'Verify Code'}
               </Button>
-              <Button 
-                type="button" 
+              <Button
+                type="button"
                 variant="outline"
                 disabled={countdown > 0 || isLoading}
                 onClick={() => handleSendOtp()}
-                className="w-full h-12 rounded-xl text-sm border-2 border-brand-border bg-white"
+                className="w-full h-11 rounded-xl text-sm border-brand-border"
               >
-                {countdown > 0 ? `Resend in ${countdown}s` : 'Resend OTP'}
+                {countdown > 0 ? `Resend in ${countdown}s` : 'Resend Code'}
               </Button>
             </form>
           )}
 
           {/* FORGOT PASSWORD */}
           {mode === 'forgot_password' && (
-            <form onSubmit={handleForgotPassword} className="flex flex-col gap-5">
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-brand-ink flex items-center gap-2">
-                  <Mail size={16} className="text-brand-deepGreen" />
-                  Email Address
-                </label>
-                <Input 
-                  type="email" 
-                  value={email} 
-                  onChange={e => setEmail(e.target.value)} 
-                  placeholder="your@email.com" 
-                  className="h-14 rounded-xl text-lg w-full bg-white/50" 
+            <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-brand-inkSoft uppercase tracking-wide">Email</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="h-12 rounded-xl w-full"
                   required
                 />
               </div>
-              <Button type="submit" disabled={isLoading} className="w-full h-14 bg-gradient-premium text-white rounded-xl text-base font-bold shadow-button">
+              <Button type="submit" disabled={isLoading} className="w-full h-12 bg-gradient-premium text-white rounded-xl font-bold shadow-button">
                 {isLoading ? 'Sending...' : 'Send Reset Link'}
               </Button>
             </form>
           )}
 
-          <div className="mt-8 text-center text-sm font-medium text-brand-inkSoft">
-            Don&apos;t have an account?{' '}
+          <p className="mt-6 text-center text-sm font-medium text-brand-inkSoft">
+            New here?{' '}
             <Link href="/signup" className="text-brand-deepGreen font-bold hover:underline">
-              Sign up here
+              Create account
             </Link>
-          </div>
+          </p>
         </motion.div>
       </div>
     </div>

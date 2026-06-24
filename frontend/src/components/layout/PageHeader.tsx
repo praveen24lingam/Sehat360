@@ -13,22 +13,23 @@ export function PageHeader({ title, subtitle, showBack = false, rightSlot }: Pag
   const router = useRouter()
 
   return (
-    <div className="sticky top-0 z-40 h-14 md:h-16 bg-brand-smoke/95 backdrop-blur-sm border-b border-brand-border px-4 md:px-6 flex items-center justify-between">
-      <div className="flex items-center gap-3">
+    <div className="sticky top-0 z-40 h-14 md:h-16 bg-brand-smoke/95 backdrop-blur-sm border-b border-brand-border/60 px-4 md:px-6 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2.5 min-w-0">
         {showBack && (
-          <button 
-            onClick={() => router.back()} 
-            className="p-1 -ml-1 text-brand-inkSoft active:bg-brand-border rounded-full transition-colors hover:bg-brand-border/50"
+          <button
+            onClick={() => router.back()}
+            className="w-8 h-8 flex items-center justify-center -ml-1 rounded-xl text-brand-inkSoft active:bg-brand-border transition-colors shrink-0"
+            aria-label="Go back"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={22} />
           </button>
         )}
-        <div className="flex flex-col">
-          <h1 className="text-lg md:text-xl font-semibold text-brand-ink leading-tight">{title}</h1>
-          {subtitle && <span className="text-sm text-brand-inkSoft leading-tight">{subtitle}</span>}
+        <div className="min-w-0">
+          <h1 className="text-[17px] md:text-lg font-bold text-brand-ink leading-tight truncate">{title}</h1>
+          {subtitle && <p className="text-xs text-brand-inkSoft font-medium leading-tight truncate">{subtitle}</p>}
         </div>
       </div>
-      {rightSlot && <div>{rightSlot}</div>}
+      {rightSlot && <div className="shrink-0">{rightSlot}</div>}
     </div>
   )
 }

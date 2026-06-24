@@ -108,32 +108,65 @@ export default function PrescriptionPage() {
   const reset = () => { setFile(null); setMappedResult(null); setOcrProgress(0); setErrorReason(null); setState('idle') }
 
   const renderIdleState = () => (
-    <motion.div key="idle" variants={ANIM_FADE} initial="initial" animate="animate" exit="exit" className="flex flex-col gap-6">
+    <motion.div key="idle" variants={ANIM_FADE} initial="initial" animate="animate" exit="exit" className="flex flex-col gap-5">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*,application/pdf" onChange={handleFileSelect} />
       <input type="file" ref={cameraInputRef} className="hidden" accept="image/*" capture="environment" onChange={handleFileSelect} />
-      <div className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center text-center transition-colors ${isDragOver ? 'border-brand-deepGreen bg-brand-lightGreen' : 'border-brand-border bg-white'}`} onDragOver={(e) => { e.preventDefault(); setIsDragOver(true) }} onDragLeave={() => setIsDragOver(false)} onDrop={handleDrop}>
-        <div className="w-16 h-16 bg-brand-lightGreen text-brand-midGreen rounded-full flex items-center justify-center mb-4"><ScanLine size={32} /></div>
-        <h3 className="font-semibold text-brand-ink mb-1">{t('prescription.uploadTitle')}</h3>
-        <p className="text-xs text-brand-inkSoft mb-6">{t('prescription.uploadSubtitle')}</p>
-        <div className="flex flex-col sm:flex-row gap-3 w-full">
-          <Button onClick={() => cameraInputRef.current?.click()} className="flex-1 rounded-xl bg-brand-deepGreen hover:bg-brand-midGreen"><Camera size={18} className="mr-2" />{t('prescription.camera')}</Button>
-          <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="flex-1 rounded-xl border-brand-border text-brand-ink"><Upload size={18} className="mr-2" />{t('prescription.upload')}</Button>
+
+      {/* Primary upload area */}
+      <div
+        className={`rounded-3xl p-7 flex flex-col items-center text-center transition-all ${
+          isDragOver ? 'bg-brand-lightGreen border-2 border-brand-deepGreen' : 'bg-white border-2 border-dashed border-brand-border'
+        }`}
+        onDragOver={(e) => { e.preventDefault(); setIsDragOver(true) }}
+        onDragLeave={() => setIsDragOver(false)}
+        onDrop={handleDrop}
+      >
+        <div className="w-16 h-16 rounded-2xl bg-brand-lightGreen flex items-center justify-center mb-4">
+          <ScanLine size={30} className="text-brand-deepGreen" />
         </div>
-        <p className="text-[11px] text-brand-inkSoft mt-4">{t('prescription.fileLimit')}</p>
+        <h3 className="text-lg font-bold text-brand-ink mb-1">{t('prescription.uploadTitle')}</h3>
+        <p className="text-sm text-brand-inkSoft mb-5 max-w-xs leading-relaxed">{t('prescription.uploadSubtitle')}</p>
+        <Button
+          onClick={() => cameraInputRef.current?.click()}
+          className="w-full h-12 rounded-xl bg-brand-deepGreen hover:bg-brand-midGreen font-bold shadow-button mb-3"
+        >
+          <Camera size={18} className="mr-2" />{t('prescription.camera')}
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => fileInputRef.current?.click()}
+          className="w-full h-12 rounded-xl border-brand-border font-semibold"
+        >
+          <Upload size={16} className="mr-2" />{t('prescription.upload')}
+        </Button>
+        <p className="text-[11px] text-brand-inkSoft/60 mt-4">{t('prescription.fileLimit')}</p>
       </div>
+
+      {/* Prescription history */}
       {prescriptions.length > 0 ? (
         <div>
-          <h4 className="font-semibold text-sm text-brand-ink mb-3">{t('prescription.history.title')}</h4>
+          <p className="text-[11px] font-bold tracking-widest uppercase text-brand-inkSoft/60 mb-3">{t('prescription.history.title')}</p>
           <div className="flex flex-col gap-2">
             {prescriptions.slice(0, 3).map(p => (
-              <div key={p.id} className="bg-white border border-brand-border rounded-xl p-3 flex justify-between items-center shadow-sm">
-                <div className="flex items-center gap-3"><Pill size={16} className="text-brand-midGreen" /><div><div className="text-xs text-brand-inkSoft mb-0.5">{new Date(p.createdAt).toLocaleDateString()}</div><div className="text-sm font-medium text-brand-ink">{p.medicines.length} dawaiyaan</div></div></div>
-                <div className="font-mono font-bold text-brand-deepGreen">₹{p.totalMonthlySaving}/mo</div>
+              <div key={p.id} className="bg-white border border-brand-border rounded-2xl p-4 flex justify-between items-center shadow-card">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-brand-lightGreen flex items-center justify-center shrink-0">
+                    <Pill size={16} className="text-brand-deepGreen" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-brand-ink">{p.medicines.length} medicines</p>
+                    <p className="text-xs text-brand-inkSoft">{new Date(p.createdAt).toLocaleDateString()}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-mono font-bold text-brand-deepGreen text-sm">₹{p.totalMonthlySaving}/mo</p>
+                  <p className="text-[10px] text-brand-inkSoft">₹{p.totalYearlySaving}/yr</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
-      ) : (<EmptyState icon={FileText} title="Koi history nahi" description="Apni pehli dawai ka parcha scan karein" />)}
+      ) : null}
     </motion.div>
   )
 

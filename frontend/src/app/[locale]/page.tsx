@@ -7,9 +7,9 @@ import { motion } from 'framer-motion'
 import { LanguageToggle } from '@/components/shared/LanguageToggle'
 import { Footer } from '@/components/layout/Footer'
 import { Logo } from '@/components/shared/Logo'
-import { 
-  ArrowRight, ShieldCheck, HeartPulse, Stethoscope, 
-  BookOpen, Users, Video, FileText
+import {
+  ArrowRight, ShieldCheck, HeartPulse, Stethoscope,
+  BookOpen, Users
 } from 'lucide-react'
 
 export default function LandingPage() {
@@ -88,17 +88,22 @@ export default function LandingPage() {
                 </Link>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
-                className="flex flex-wrap items-center gap-6 text-brand-inkSoft text-sm font-bold"
+                className="flex flex-wrap items-center gap-5 text-brand-inkSoft text-sm font-semibold"
               >
                 <div className="flex items-center gap-2">
-                  <ShieldCheck size={18} className="text-brand-midGreen" /> 100% Free & Secure
+                  <ShieldCheck size={16} className="text-brand-midGreen" /> 100% Free
                 </div>
+                <div className="w-1 h-1 rounded-full bg-brand-border" />
                 <div className="flex items-center gap-2">
-                  <ShieldCheck size={18} className="text-brand-midGreen" /> Available in Hindi
+                  <ShieldCheck size={16} className="text-brand-midGreen" /> Hindi &amp; English
+                </div>
+                <div className="w-1 h-1 rounded-full bg-brand-border" />
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={16} className="text-brand-midGreen" /> No Ads
                 </div>
               </motion.div>
             </div>
@@ -124,29 +129,63 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* FEATURES SECTION */}
-        <section className="w-full bg-white py-24 border-y border-brand-border/40">
+        {/* FEATURES SECTION — asymmetric bento-style layout */}
+        <section className="w-full py-20 border-t border-brand-border/30">
           <div className="max-w-shell-desktop mx-auto px-4 sm:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-black text-brand-ink mb-4">Everything your family needs</h2>
-              <p className="text-brand-inkSoft font-medium max-w-2xl mx-auto">Access verified government health resources, schemes, and tools in one unified platform.</p>
+            <div className="mb-12">
+              <p className="text-[11px] font-bold tracking-widest uppercase text-brand-inkSoft/60 mb-3">What you get</p>
+              <h2 className="text-3xl md:text-4xl font-black text-brand-ink leading-tight max-w-lg">
+                Sab kuch free mein.<br />
+                <span className="text-brand-deepGreen">Government se direct.</span>
+              </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { icon: BookOpen, title: 'Health Articles', desc: 'Read verified information in Hindi', color: 'text-blue-600', bg: 'bg-blue-50' },
-                { icon: Video, title: 'Expert Videos', desc: 'Watch doctor consultations and guides', color: 'text-red-600', bg: 'bg-red-50' },
-                { icon: Stethoscope, title: 'Govt Schemes', desc: 'Check eligibility for PM-JAY and more', color: 'text-brand-deepGreen', bg: 'bg-brand-lightGreen' },
-                { icon: Users, title: 'Family Profiles', desc: 'Track vaccination and records for all', color: 'text-purple-600', bg: 'bg-purple-50' }
-              ].map((feature, idx) => (
-                <div key={idx} className="p-6 rounded-3xl bg-brand-smoke border border-brand-border/40 hover:shadow-card-md transition-shadow">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 ${feature.bg} ${feature.color}`}>
-                    <feature.icon size={24} />
-                  </div>
-                  <h3 className="text-xl font-black text-brand-ink mb-2">{feature.title}</h3>
-                  <p className="text-sm font-medium text-brand-inkSoft">{feature.desc}</p>
+            {/* Bento grid: varied card sizes */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {/* Large hero card */}
+              <div className="col-span-2 row-span-2 bg-gradient-to-br from-brand-deepGreen to-brand-midGreen rounded-3xl p-8 flex flex-col justify-between min-h-[240px] relative overflow-hidden">
+                <div className="absolute -bottom-8 -right-8 w-40 h-40 rounded-full bg-white/5 pointer-events-none" />
+                <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+                  <Stethoscope size={24} className="text-white" />
                 </div>
-              ))}
+                <div>
+                  <h3 className="text-2xl font-black text-white mb-2">Government Schemes</h3>
+                  <p className="text-white/70 text-sm font-medium">PM-JAY, PMMVY, JSY — check what you qualify for in 2 minutes. No paperwork needed to check.</p>
+                </div>
+              </div>
+
+              {/* Small card 1 */}
+              <div className="col-span-1 bg-brand-blueLight border border-brand-blue/15 rounded-3xl p-6 flex flex-col gap-3">
+                <div className="w-10 h-10 rounded-xl bg-brand-blue/15 flex items-center justify-center">
+                  <BookOpen size={20} className="text-brand-blue" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-brand-ink">Hindi Articles</h3>
+                  <p className="text-xs text-brand-inkSoft font-medium mt-1">Anaemia, nutrition, newborn care — in your language.</p>
+                </div>
+              </div>
+
+              {/* Small card 2 */}
+              <div className="col-span-1 bg-brand-pinkLight border border-brand-pink/15 rounded-3xl p-6 flex flex-col gap-3">
+                <div className="w-10 h-10 rounded-xl bg-brand-pink/15 flex items-center justify-center">
+                  <HeartPulse size={20} className="text-brand-pink" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-brand-ink">Pregnancy Tracker</h3>
+                  <p className="text-xs text-brand-inkSoft font-medium mt-1">Week by week guidance and checkup reminders.</p>
+                </div>
+              </div>
+
+              {/* Wide bottom card */}
+              <div className="col-span-2 bg-white border border-brand-border rounded-3xl p-6 flex items-center gap-6">
+                <div className="w-12 h-12 rounded-2xl bg-brand-saffronLight flex items-center justify-center shrink-0">
+                  <Users size={24} className="text-brand-saffron" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-brand-ink">Family Health Profiles</h3>
+                  <p className="text-sm text-brand-inkSoft font-medium">Vaccination schedules for children, medicine savings for everyone — one account covers your whole family.</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>

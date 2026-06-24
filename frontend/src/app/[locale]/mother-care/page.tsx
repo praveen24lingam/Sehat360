@@ -234,14 +234,14 @@ export default function MotherCarePage() {
         </section>
 
         <section>
-          <div className="bg-white border border-brand-border rounded-2xl p-4 shadow-sm flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-brand-lightGreen flex items-center justify-center shrink-0">
-              <Leaf size={32} className="text-brand-deepGreen" />
+          <div className="bg-white border border-brand-border rounded-2xl p-4 shadow-card flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-brand-lightGreen flex items-center justify-center shrink-0">
+              <Leaf size={28} className="text-brand-deepGreen" />
             </div>
-            <div>
-              <h3 className="font-semibold text-brand-ink text-sm mb-0.5">{t('motherCare.babySize')}</h3>
-              <p className="text-sm font-medium text-brand-deepGreen mb-1">{language === 'hi' ? babySize.hi : babySize.en}</p>
-              <p className="text-xs text-brand-inkSoft font-mono">{babySize.size}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-brand-inkSoft/60 mb-0.5">{t('motherCare.babySize')}</p>
+              <p className="text-base font-bold text-brand-ink">{language === 'hi' ? babySize.hi : babySize.en}</p>
+              <p className="text-xs text-brand-inkSoft font-mono mt-0.5">{babySize.size}</p>
             </div>
           </div>
         </section>
@@ -268,12 +268,12 @@ export default function MotherCarePage() {
         </section>
 
         <section>
-          <h2 className="text-base font-semibold text-brand-ink mb-4">{t('motherCare.timelineTitle')}</h2>
+          <p className="section-label mb-3">{t('motherCare.timelineTitle')}</p>
           {renderTimeline()}
         </section>
 
         <section className="mb-4">
-          <h2 className="text-base font-semibold text-brand-ink mb-3">{t('motherCare.chatTitle')}</h2>
+          <p className="section-label mb-3">{t('motherCare.chatTitle')}</p>
           {renderChat()}
           <div className="bg-brand-blueLight border border-brand-blue/20 rounded-xl p-3 flex items-start gap-2 mt-3">
             <Sparkles size={16} className="text-brand-blue shrink-0 mt-0.5" />

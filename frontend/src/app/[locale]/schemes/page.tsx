@@ -76,14 +76,15 @@ export default function SchemesPage() {
   const toggleCard = (id: string) => setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }))
 
   const OptionButton = ({ label, active, onClick }: { label: string, active: boolean, onClick: () => void }) => (
-    <button type="button" onClick={onClick} className={`px-3 py-2 text-sm font-medium rounded-xl border transition-colors flex-1 ${active ? 'bg-brand-deepGreen text-white border-brand-deepGreen shadow-sm' : 'bg-white text-brand-inkSoft border-brand-border hover:bg-brand-smoke'}`}>
+    <button type="button" onClick={onClick} className={`px-3 py-2 text-sm font-semibold rounded-xl border transition-all flex-1 flex items-center justify-center gap-1.5 active:scale-[0.97] ${active ? 'bg-brand-deepGreen text-white border-brand-deepGreen shadow-sm' : 'bg-white text-brand-inkSoft border-brand-border'}`}>
+      {active && <span className="w-3.5 h-3.5 rounded-full bg-white/30 flex items-center justify-center shrink-0"><svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></span>}
       {label}
     </button>
   )
 
   const renderLocationSection = () => (
-    <div className="bg-white border border-brand-border rounded-2xl p-5 shadow-sm space-y-5">
-      <h3 className="font-semibold text-brand-ink text-sm border-b border-brand-border pb-2">Location & Income</h3>
+    <div className="bg-white border border-brand-border rounded-2xl p-5 shadow-card space-y-5">
+      <p className="section-label">Location & Income</p>
       <div className="space-y-1.5">
         <label className="text-xs font-semibold text-brand-inkSoft uppercase tracking-wider">{t('schemes.form.stateLabel')}</label>
         <Controller name="state" control={control} render={({ field }) => (
@@ -106,8 +107,8 @@ export default function SchemesPage() {
   )
 
   const renderCardsSection = () => (
-    <div className="bg-white border border-brand-border rounded-2xl p-5 shadow-sm space-y-5">
-      <h3 className="font-semibold text-brand-ink text-sm border-b border-brand-border pb-2">Documents</h3>
+    <div className="bg-white border border-brand-border rounded-2xl p-5 shadow-card space-y-5">
+      <p className="section-label">Documents</p>
       <div className="space-y-1.5">
         <label className="text-xs font-semibold text-brand-inkSoft uppercase tracking-wider">{t('schemes.form.rationLabel')}</label>
         <div className="flex flex-wrap gap-2">
@@ -129,8 +130,8 @@ export default function SchemesPage() {
   )
 
   const renderFamilySection = () => (
-    <div className="bg-white border border-brand-border rounded-2xl p-5 shadow-sm space-y-5">
-      <h3 className="font-semibold text-brand-ink text-sm border-b border-brand-border pb-2">Family</h3>
+    <div className="bg-white border border-brand-border rounded-2xl p-5 shadow-card space-y-5">
+      <p className="section-label">Family</p>
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium text-brand-ink leading-tight pr-4">{t('schemes.form.pregnantLabel')}</label>
         <Controller name="isPregnant" control={control} render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />} />
@@ -155,12 +156,12 @@ export default function SchemesPage() {
       <PageHeader title={t('schemes.title')} />
       <div className="p-4 flex flex-col gap-4">
         {!showResults && !isMatching && (
-          <div className="bg-white border border-brand-border rounded-2xl p-4 shadow-sm flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-brand-blueLight flex items-center justify-center shrink-0"><Building2 size={24} className="text-brand-blue" /></div>
-            <div>
-              <h3 className="font-semibold text-brand-ink text-sm mb-1">{t('schemes.trustTitle')}</h3>
-              <p className="text-xs text-brand-ink font-medium mb-1.5">{t('schemes.trustSubtitle')}</p>
-              <p className="text-[10px] text-brand-inkSoft leading-tight opacity-80">{t('schemes.trustNote')}</p>
+          <div className="bg-white border border-brand-border rounded-2xl p-4 shadow-card flex items-start gap-4">
+            <div className="w-11 h-11 rounded-2xl bg-brand-blueLight flex items-center justify-center shrink-0"><Building2 size={20} className="text-brand-blue" /></div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-brand-ink mb-0.5">{t('schemes.trustTitle')}</p>
+              <p className="text-xs text-brand-inkSoft font-medium mb-1">{t('schemes.trustSubtitle')}</p>
+              <p className="text-[11px] text-brand-inkSoft/70 leading-tight">{t('schemes.trustNote')}</p>
             </div>
           </div>
         )}

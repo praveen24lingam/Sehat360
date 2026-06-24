@@ -2,7 +2,7 @@
 
 import { Reminder } from '@/types'
 import Link from 'next/link'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, AlertCircle, Bell } from 'lucide-react'
 
 interface ReminderCardProps {
   reminder: Reminder
@@ -15,16 +15,27 @@ export function ReminderCard({ reminder, language }: ReminderCardProps) {
   const subtitle = language === 'hi' ? reminder.subtitleHi : reminder.subtitle
 
   return (
-    <Link href={reminder.linkedRoute} className={`block p-4 rounded-xl border-l-4 shadow-sm bg-white border border-y-brand-border border-r-brand-border ${isUrgent ? 'border-l-brand-saffron bg-brand-saffronLight/30' : 'border-l-brand-deepGreen bg-brand-lightGreen/30'}`}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h4 className={`font-semibold mb-1 ${isUrgent ? 'text-brand-saffron' : 'text-brand-deepGreen'}`}>
-            {title}
-          </h4>
-          <p className="text-sm text-brand-inkSoft">{subtitle}</p>
-        </div>
-        <ChevronRight size={20} className="text-brand-inkSoft/50" />
+    <Link
+      href={reminder.linkedRoute}
+      className={`flex items-center gap-3 p-4 rounded-2xl border transition-all active:scale-[0.98] ${
+        isUrgent
+          ? 'bg-brand-saffronLight border-brand-saffron/25'
+          : 'bg-white border-brand-border shadow-card'
+      }`}
+    >
+      <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+        isUrgent ? 'bg-brand-saffron/20' : 'bg-brand-lightGreen'
+      }`}>
+        {isUrgent
+          ? <AlertCircle size={18} className="text-brand-saffron" />
+          : <Bell size={18} className="text-brand-deepGreen" />
+        }
       </div>
+      <div className="flex-1 min-w-0">
+        <p className={`text-sm font-bold truncate ${isUrgent ? 'text-brand-ink' : 'text-brand-ink'}`}>{title}</p>
+        <p className="text-xs text-brand-inkSoft font-medium truncate mt-0.5">{subtitle}</p>
+      </div>
+      <ChevronRight size={18} className={isUrgent ? 'text-brand-saffron' : 'text-brand-inkSoft/50'} />
     </Link>
   )
 }
